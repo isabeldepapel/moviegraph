@@ -13,20 +13,24 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import environ
 
-root = environ.Path(__file__) - 3  # go three directories up
+root = environ.Path(__file__) - 2  # go 2 directories up
 
-# set up env types and defaults
+# set up casting and defaults
 env = environ.Env(
     SECRET_KEY=str,
     DEBUG=(bool, False),
     DATABASE_URL=str,
 )
 
+# update engine format in environ env
+# env.DB_SCHEMES['psql'] = 'django.db.backends.postgresql'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# read .env
-env.read_env(os.path.join(BASE_DIR, '.env'))
+# read .env file
+# env.read_env(os.path.join(BASE_DIR, '.env'))
+env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -85,12 +89,14 @@ WSGI_APPLICATION = 'moviegraph.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
+print(env.db())
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
+    'default': env.db(),
 }
 
 
