@@ -29,7 +29,6 @@ env = environ.Env(
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # read .env file
-# env.read_env(os.path.join(BASE_DIR, '.env'))
 env.read_env()
 
 # Quick-start development settings - unsuitable for production
@@ -89,7 +88,6 @@ WSGI_APPLICATION = 'moviegraph.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-print(env.db())
 
 DATABASES = {
     # 'default': {
