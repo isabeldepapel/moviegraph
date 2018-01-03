@@ -16,7 +16,7 @@ import environ
 
 root = environ.Path(__file__) - 3
 env = environ.Env()
-env.read_env()
+# env.read_env()
 
 # set up file paths
 TITLE_FILE = 'title.basics.tsv'
@@ -35,15 +35,69 @@ NAME_PATH = DATA_PATH + NAME_FILE
 PRINCIPAL_PATH = DATA_PATH + PRINCIPAL_FILE
 
 
+def convert_if_null(val):
+    r"""Convert string '\N' to None to save as null in db."""
+    if(val == "\\N"):
+        val = None
+    return val
+
+
+def delete_records(model):
+    """Drop all records from the specified model/table."""
+    recs = model.objects.all()
+    recs.delete()
+
+
 def load_titles():
     """Read title.basics.tsv into db."""
     print("loading titles")
 
-    with open(TITLE_PATH, encoding='utf-8') as fd:
-        rd = csv.reader(fd, delimiter="\t")
-        for i, row in enumerate(rd):
-            print(row)
-            if(i > 15):
+    # clear all existing recs from the models
+    # delete_records(Title)
+    # delete_records(Genre)
+    # delete_records(TitleGenre)
+
+    with open(TITLE_PATH, encoding='utf-8') as tsvfile:
+        reader = csv.DictReader(tsvfile, delimiter="\t")
+
+        for i, row in enumerate(reader):
+            # tconst	titleType	primaryTitle	originalTitle	isAdult	startYear	endYear	runtimeMinutes	genres
+
+            print(row['tconst'], row['titleType'], row['primaryTitle'], row['originalTitle'], row['isAdult'], row['startYear'], row['endYear'], row['runtimeMinutes'], row['genres'])
+
+            title, created = Title.objects.get_or_create(
+                id=row['tconst'],
+                title_type=row['titleType'],
+                primary_title=row['primaryTitle'],
+                original_title=row['originalTitle'],
+                is_adult=row['isAdult'],
+                start_year=row['startYear'],
+                end_year=convert_if_null(row['endYear']),
+                runtime_minutes=convert_if_null(row['runtimeMinutes']),
+            )
+
+            print(title, created)
+
+            genres = convert_if_null(row['genres'])
+
+            if(genres):
+                # add genres to genre table
+                genres = genres.split(',')
+
+                for genre in genres:
+                    genre, created = Genre.objects.get_or_create(name=genre)
+
+                    print(genre, created)
+
+                    # add title's genres to TitleGenre join table
+                    title_genre, created = TitleGenre.objects.get_or_create(
+                        title=title,
+                        genre=genre,
+                    )
+
+                    print(title_genre, created)
+
+            if(i > 25):
                 break
 
     return None
