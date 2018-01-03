@@ -22,8 +22,8 @@ class Title(models.Model):
 
     id = models.CharField(max_length=9, primary_key=True)
     title_type = models.CharField(max_length=50)
-    primary_title = models.CharField(max_length=200)
-    original_title = models.CharField(max_length=200)
+    primary_title = models.TextField()
+    original_title = models.TextField()
     is_adult = models.BooleanField()
     start_year = models.PositiveSmallIntegerField(null=True)
     end_year = models.PositiveSmallIntegerField(null=True)
