@@ -25,7 +25,7 @@ class Title(models.Model):
     primary_title = models.CharField(max_length=200)
     original_title = models.CharField(max_length=200)
     is_adult = models.BooleanField()
-    start_year = models.PositiveSmallIntegerField()
+    start_year = models.PositiveSmallIntegerField(null=True)
     end_year = models.PositiveSmallIntegerField(null=True)
     runtime_minutes = models.PositiveSmallIntegerField(null=True)
 
