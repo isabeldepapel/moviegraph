@@ -23,12 +23,11 @@ TITLE_FILE = 'title.basics.tsv'
 NAME_FILE = 'name.basics.tsv'
 PRINCIPAL_FILE = 'title.principals.tsv'
 
-# if in dev, load test data
-if env('DEBUG'):
-    print('debug')
-    DATA_PATH = str(root.path('data/test/')) + '/'
-else:
-    DATA_PATH = str(root.path('data/')) + '/'
+# for testing
+# DATA_PATH = str(root.path('data/test/')) + '/'
+
+# actual imdb data
+DATA_PATH = str(root.path('data/')) + '/'
 
 TITLE_PATH = DATA_PATH + TITLE_FILE
 NAME_PATH = DATA_PATH + NAME_FILE
@@ -42,41 +41,37 @@ def convert_if_null(val):
     return val
 
 
-def delete_records(model):
-    """Drop all records from the specified model/table."""
-    recs = model.objects.all()
-    recs.delete()
+def reset_tables():
+    """Clear all records from all tables."""
+    Title.objects.all().delete()
+    Genre.objects.all().delete()
+    TitleGenre.objects.all().delete()
+    Name.objects.all().delete()
+    Profession.objects.all().delete()
+    NameProfession.objects.all().delete()
+    Principal.objects.all().delete()
 
 
 def load_titles():
     """Read title.basics.tsv into db."""
-    print("loading titles")
-
-    # clear all existing recs from the models
-    # delete_records(Title)
-    # delete_records(Genre)
-    # delete_records(TitleGenre)
+    print('loading titles')
 
     with open(TITLE_PATH, encoding='utf-8') as tsvfile:
-        reader = csv.DictReader(tsvfile, delimiter="\t")
+        reader = csv.DictReader(tsvfile, delimiter='\t')
 
-        for i, row in enumerate(reader):
-            # tconst	titleType	primaryTitle	originalTitle	isAdult	startYear	endYear	runtimeMinutes	genres
-
-            print(row['tconst'], row['titleType'], row['primaryTitle'], row['originalTitle'], row['isAdult'], row['startYear'], row['endYear'], row['runtimeMinutes'], row['genres'])
-
+        for row in reader:
             title, created = Title.objects.get_or_create(
                 id=row['tconst'],
                 title_type=row['titleType'],
                 primary_title=row['primaryTitle'],
                 original_title=row['originalTitle'],
                 is_adult=row['isAdult'],
-                start_year=row['startYear'],
+                start_year=convert_if_null(row['startYear']),
                 end_year=convert_if_null(row['endYear']),
                 runtime_minutes=convert_if_null(row['runtimeMinutes']),
             )
-
-            print(title, created)
+            print(row)
+            # print(title)
 
             genres = convert_if_null(row['genres'])
 
@@ -87,37 +82,109 @@ def load_titles():
                 for genre in genres:
                     genre, created = Genre.objects.get_or_create(name=genre)
 
-                    print(genre, created)
-
                     # add title's genres to TitleGenre join table
                     title_genre, created = TitleGenre.objects.get_or_create(
                         title=title,
                         genre=genre,
                     )
-
-                    print(title_genre, created)
-
-            if(i > 25):
-                break
-
     return None
+
+
+def load_names():
+    """Read name.basics.tsv into db."""
+    print('loading names')
+
+    with open(NAME_PATH, encoding='utf-8') as tsvfile:
+        reader = csv.DictReader(tsvfile, delimiter='\t')
+
+        for row in reader:
+            name, created = Name.objects.get_or_create(
+                id=row['nconst'],
+                primary_name=row['primaryName'],
+                birth_year=row['birthYear'],
+                death_year=convert_if_null(row['deathYear']),
+            )
+            print(name)
+
+            professions = convert_if_null(row['primaryProfession'])
+
+            if(professions):
+                # add to profession table
+                professions = professions.split(',')
+
+                for prof in professions:
+                    prof, created = Profession.objects.get_or_create(name=prof)
+
+                    # add name, prof to NameProf table
+                    name_prof, created = NameProfession.objects.get_or_create(
+                        name=name,
+                        profession=prof,
+                    )
+    return None
+
+
+def load_principals():
+    """Read title.principals.tsv into db."""
+    print('loading principals')
+
+    with open(PRINCIPAL_PATH, encoding='utf-8') as tsvfile:
+        reader = csv.DictReader(tsvfile, delimiter='\t')
+
+        for row in reader:
+            cast_list = row['principalCast'].split(',')
+
+            for cast_member in cast_list:
+                # create entry, default to NOT known for
+                # will update this later (iterate through names data)
+                principal, created = Principal.objects.get_or_create(
+                    name=Name.objects.get(id=cast_member),
+                    title=Title.objects.get(id=row['tconst']),
+                    known_for=False,
+                )
+    return None
+
+
+def add_known_for_data():
+    """Read known_for field from names.basics.tsv file into Principal table."""
+    print('adding known_for data')
+
+    # this may change as new movies are added, so set known_for to False
+    # for all entries in table
+    Principal.objects.all().update(known_for=False)
+
+    with open(NAME_PATH, encoding='utf-8') as tsvfile:
+        reader = csv.DictReader(tsvfile, delimiter='\t')
+
+        for row in reader:
+            known_for = row['knownForTitles']
+
+            if(known_for):
+                titles = known_for.split(',')
+
+                for title_id in titles:
+                    name_id = row['nconst']
+
+                    Principal.objects.filter(
+                        name_id=name_id,
+                        title_id=title_id
+                    ).update(known_for=True)
 
 
 class Command(BaseCommand):
     help = 'Reads IMDB data files into the database'
 
-    def add_arguments(self, parser):
-        """
-        Parse arguments on command line.
-
-        Requires file name or 'all' to load all files.
-        Possible refactor to something easier than file names.
-        """
-        parser.add_argument(
-            'file_name',
-            help='File you want to load into database, or "all" to load all',
-            type=str,
-        )
+    # def add_arguments(self, parser):
+    #     """
+    #     Parse arguments on command line.
+    #
+    #     Requires file name or 'all' to load all files.
+    #     Possible refactor to something easier than file names.
+    #     """
+    #     parser.add_argument(
+    #         'file_name',
+    #         help='File you want to load into database, or "all" to load all',
+    #         type=str,
+    #     )
 
     def handle(self, *args, **options):
         """
@@ -125,25 +192,11 @@ class Command(BaseCommand):
 
         All will call all of the load fuctions.
         """
+        # print(options['file_name'])
 
-        print(options['file_name'])
-
-        # OPTIONS
-        # name.basics.tsv
-        # title.basics.tsv
-        # title.principals.tsv
-        # all
-
-        # all_entries = Title.objects.all()
-        # for entry in all_entries:
-        #     self.stdout.write('entry "%s"' % entry)
+        # reset_tables()
         load_titles()
-        return None
-
-    def load_names():
-        """Read name.basics.tsv into db."""
-        return None
-
-    def load_principals():
-        """Read title.principals.tsv into db."""
+        load_names()
+        load_principals()
+        add_known_for_data()
         return None
