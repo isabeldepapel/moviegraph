@@ -20,14 +20,18 @@ class Title(models.Model):
     Genres (in IMDB schema) pulled out into a separate join table.
     """
 
-    id = models.CharField(max_length=9, primary_key=True)
+    id = models.CharField(max_length=10, primary_key=True)
     title_type = models.CharField(max_length=50)
-    primary_title = models.TextField()
-    original_title = models.TextField()
-    is_adult = models.BooleanField()
-    start_year = models.PositiveSmallIntegerField(null=True)
-    end_year = models.PositiveSmallIntegerField(null=True)
-    runtime_minutes = models.PositiveSmallIntegerField(null=True)
+    primary_title = models.TextField(null=True)
+    original_title = models.TextField(null=True)
+    is_adult = models.IntegerField()
+    start_year = models.FloatField(null=True)
+    end_year = models.FloatField(null=True)
+    runtime_minutes = models.FloatField(null=True)
+    # start_year = models.PositiveSmallIntegerField(null=True)
+    # end_year = models.PositiveSmallIntegerField(null=True)
+    # runtime_minutes = models.PositiveSmallIntegerField(null=True)
+    genres = models.TextField(null=True)
 
     def __str__(self):
         return self.primary_title
@@ -55,9 +59,9 @@ class TitleGenre(models.Model):
 
 
 class Name(models.Model):
-    id = models.CharField(max_length=9, primary_key=True)
+    id = models.CharField(max_length=10, primary_key=True)
     primary_name = models.CharField(max_length=200)
-    birth_year = models.PositiveSmallIntegerField()
+    birth_year = models.PositiveSmallIntegerField(null=True)
     death_year = models.PositiveSmallIntegerField(null=True)
 
     def __str__(self):
