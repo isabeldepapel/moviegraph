@@ -24,13 +24,13 @@ class Title(models.Model):
     title_type = models.CharField(max_length=50)
     primary_title = models.TextField(null=True)
     original_title = models.TextField(null=True)
-    is_adult = models.IntegerField()
-    start_year = models.FloatField(null=True)
-    end_year = models.FloatField(null=True)
-    runtime_minutes = models.FloatField(null=True)
-    # start_year = models.PositiveSmallIntegerField(null=True)
-    # end_year = models.PositiveSmallIntegerField(null=True)
-    # runtime_minutes = models.PositiveSmallIntegerField(null=True)
+    is_adult = models.BooleanField()
+    # start_year = models.FloatField(null=True)
+    # end_year = models.FloatField(null=True)
+    # runtime_minutes = models.FloatField(null=True)
+    start_year = models.IntegerField(null=True)
+    end_year = models.IntegerField(null=True)
+    runtime_minutes = models.IntegerField(null=True)
     genres = models.TextField(null=True)
 
     def __str__(self):
@@ -63,6 +63,7 @@ class Name(models.Model):
     primary_name = models.CharField(max_length=200)
     birth_year = models.PositiveSmallIntegerField(null=True)
     death_year = models.PositiveSmallIntegerField(null=True)
+    professions = models.TextField(null=True)
 
     def __str__(self):
         return self.primary_name
@@ -99,8 +100,8 @@ class Principal(models.Model):
     the person is known.
     """
 
-    name = models.ForeignKey(Name, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
+    name = models.ForeignKey(Name, on_delete=models.CASCADE)
     known_for = models.BooleanField()
 
     def __str__(self):
