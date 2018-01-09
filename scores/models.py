@@ -27,7 +27,7 @@ class Title(models.Model):
     genres = models.TextField(null=True)
 
     def __str__(self):
-        return self.primary_title
+        return self.primary_title + ', ' + str(self.start_year)
 
 
 class Name(models.Model):
@@ -57,6 +57,5 @@ class Principal(models.Model):
 
     def __str__(self):
         s = str(self.name) + " in title: " + str(self.title)
-        s += " Known for title: " + str(self.known_for)
 
         return s
