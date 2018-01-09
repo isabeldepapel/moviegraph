@@ -14,20 +14,13 @@ from django.db import models
 
 # Create your models here.
 class Title(models.Model):
-    """
-    Define title (movie, TV show, etc.) model.
+    """Define title (movie, TV show, etc.) model."""
 
-    Genres (in IMDB schema) pulled out into a separate join table.
-    """
-
-    id = models.CharField(max_length=10, primary_key=True)
+    id = models.CharField(max_length=9, primary_key=True)
     title_type = models.CharField(max_length=50)
     primary_title = models.TextField(null=True)
     original_title = models.TextField(null=True)
     is_adult = models.BooleanField()
-    # start_year = models.FloatField(null=True)
-    # end_year = models.FloatField(null=True)
-    # runtime_minutes = models.FloatField(null=True)
     start_year = models.IntegerField(null=True)
     end_year = models.IntegerField(null=True)
     runtime_minutes = models.IntegerField(null=True)
@@ -37,57 +30,16 @@ class Title(models.Model):
         return self.primary_title
 
 
-class Genre(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class TitleGenre(models.Model):
-    """
-    Join table for Title and Genre.
-
-    Up to 3 genres for each title.
-    """
-
-    title = models.ForeignKey(Title, on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.title) + " has genre of " + str(self.genre)
-
-
 class Name(models.Model):
-    id = models.CharField(max_length=10, primary_key=True)
+    id = models.CharField(max_length=9, primary_key=True)
     primary_name = models.CharField(max_length=200)
     birth_year = models.PositiveSmallIntegerField(null=True)
     death_year = models.PositiveSmallIntegerField(null=True)
     professions = models.TextField(null=True)
+    known_for = models.TextField(null=True)
 
     def __str__(self):
         return self.primary_name
-
-
-class Profession(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class NameProfession(models.Model):
-    """
-    Join table for Name and Profession.
-
-    Up to 3 professions for each name.
-    """
-
-    name = models.ForeignKey(Name, on_delete=models.CASCADE)
-    profession = models.ForeignKey(Profession, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.name) + " has profession of " + str(self.profession)
 
 
 class Principal(models.Model):
@@ -102,7 +54,6 @@ class Principal(models.Model):
 
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     name = models.ForeignKey(Name, on_delete=models.CASCADE)
-    known_for = models.BooleanField()
 
     def __str__(self):
         s = str(self.name) + " in title: " + str(self.title)
