@@ -8,6 +8,8 @@ from django.db.models import Q
 from .models import Title, Name, Principal
 from collections import deque
 
+import time
+
 KEVIN_BACON = Name.objects.filter(
     Q(primary_name='Kevin Bacon') &
     Q(birth_year=1958)
@@ -25,18 +27,17 @@ def generate_graph():
     actors (neighbor nodes) are the keys, the movies(s) in
     common (edges) are the values.
     """
-    # actors = Name.objects.filter(
-    #     Q(professions__icontains='actor') |
-    #     Q(professions__icontains='actress')
-    # )
+    start = time.time()
 
     movies = Title.objects.filter(title_type='movie')
 
     graph = {}
 
     # iterate through movies, find actors for each and create nodes
-    for movie in movies:
-        actors = Principal.objects.filter(title_id=movie.id)
+    for movie in movies.iterator():
+        movie_id = movie.id
+        print(movie)
+        actors = Principal.objects.filter(title_id=movie_id)
         costars = set(actors)
 
         for actor in actors:
@@ -44,24 +45,30 @@ def generate_graph():
             costars.remove(actor)
 
             # if no costars, go to next iteration
-            if len(costars < 1):
+            if len(costars) < 1:
                 continue
 
+            if actor not in graph:
+                graph[actor] = costars
+            else:
+                graph[actor] = graph[actor] | costars
             # if actor not in graph, add actor and its neighbors
             # with current movie as edge
-            if actor not in graph:
-                graph[actor] = {costars: set(movie) for costar in costars}
-            else:
-                # check if costars are already neighbor nodes before adding
-                for costar in costars:
-                    if costar not in graph[actor]:
-                        graph[actor][costar] = set(movie)
-                    else:
-                        graph[actor][costar].add(movie)
+
+            # if actor not in graph:
+            #     graph[actor] = {costar: set([movie]) for costar in costars}
+            # else:
+            #     # check if costars are already neighbor nodes before adding
+            #     for costar in costars:
+            #         if costar not in graph[actor]:
+            #             graph[actor][costar] = set([movie])
+            #         else:
+            #             graph[actor][costar].add(movie)
 
             # add current actor back to costars
             costars.add(actor)
-
+    print(time.time() - start)
+    print('it took {0:0.1f} seconds'.format(time.time() - start))
     return graph
     # iterate through actors, find costars for each movie
     # for actor in actors:
