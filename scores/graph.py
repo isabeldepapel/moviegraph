@@ -43,6 +43,10 @@ def generate_graph():
             # remove current actor from costars
             costars.remove(actor)
 
+            # if no costars, go to next iteration
+            if len(costars < 1):
+                continue
+
             # if actor not in graph, add actor and its neighbors
             # with current movie as edge
             if actor not in graph:
