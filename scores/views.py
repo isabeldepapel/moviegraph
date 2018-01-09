@@ -16,10 +16,11 @@ def index(request):
         Q(professions__icontains='actress')
     )
     context = {'actors': actors}
+    return render(request, 'scores/index.html')
     #
     # return render(
     #     request,
     #     'scores/index.html',
     #     context
     # )
-    return HttpResponse("Hello, world. Scores index page.")
+    # return HttpResponse("Hello, world. Scores index page.")

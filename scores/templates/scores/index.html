@@ -2,11 +2,12 @@
 
 {% block content %}
 
-<!-- <form action="{% url 'scores:pick' name.id %}" method="post"> -->
 <!-- {% csrf_token} -->
+<form id="search-graph">
   <label for="end-name">Name</label>
   <input type="text" name="end-name" id="end-name" placeholder="Name"/>
+  <button type="submit" class="button">Search</button>
+</form>
 
-<!-- </form> -->
 
 {% endblock %}
