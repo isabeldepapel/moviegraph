@@ -2,13 +2,34 @@
 
 {% block content %}
 
+{% if error_message %}
+  <p class="error">
+    {{ error_message }}
+  </p>
+{% endif %}
+
 <form action="submit" method="post" id="search-graph">
   {% csrf_token %}
 
+  <input type="text" name="start_name" value="Kevin Bacon" disabled />
   <label for="end-name">Name</label>
-  <input type="text" name="end-name" id="end-name" placeholder="Name"/>
+  <input type="search" name="end-name" id="end-name" placeholder="Name"/>
   <button type="submit" class="button">Search</button>
 </form>
 
+{% if end_name %}
+  <p>
+    Searching for {{ end_name }}
+  </p>
+  <p>
+    Name: {{ actor_name }}
+  </p>
+  <p>
+    Id: {{ actor_id }}
+  </p>
+  <p>
+    Born: {{ actor_birth_year}}
+  </p>
+{% endif %}
 
 {% endblock %}

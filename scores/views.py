@@ -16,19 +16,30 @@ def index(request):
         Q(professions__icontains='actress')
     )
     context = {'actors': actors}
-    return render(request, 'scores/index.html', context)
-    #
-    # return render(
-    #     request,
-    #     'scores/index.html',
-    #     context
-    # )
+    return render(request, 'scores/index.html')
+
     # return HttpResponse("Hello, world. Scores index page.")
 
 
 def submit(request):
-    actors = context['actors']
+    actors = Name.objects.filter(
+        Q(professions__icontains='actor') |
+        Q(professions__icontains='actress')
+    )
     end_name = request.POST['end-name']
     match = actors.filter(primary_name__iexact=end_name)
+    context = {}
+    # check if no results
+    if match.count() == 0:
+        context['error_message'] = 'Not a valid name: ' + end_name
+        return render(request, 'scores/index.html', context)
+    else:
+        actor = match[0]
+        context['end_name'] = end_name
+        context['actor_id'] = actor.id
+        context['actor_name'] = actor.primary_name
+        context['actor_birth_year'] = actor.birth_year
+        context['actor_professions'] = actor.professions
+        return render(request, 'scores/index.html', context)
 
-    return HttpResponse('This is a stub: ' + end_name)
+    # return HttpResponse('This is a stub: ' + end_name)
