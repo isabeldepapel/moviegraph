@@ -2,8 +2,9 @@
 
 {% block content %}
 
-<!-- {% csrf_token} -->
-<form id="search-graph">
+<form action="submit" method="post" id="search-graph">
+  {% csrf_token %}
+
   <label for="end-name">Name</label>
   <input type="text" name="end-name" id="end-name" placeholder="Name"/>
   <button type="submit" class="button">Search</button>
