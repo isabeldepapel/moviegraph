@@ -16,7 +16,7 @@ def index(request):
         Q(professions__icontains='actress')
     )
     context = {'actors': actors}
-    return render(request, 'scores/index.html')
+    return render(request, 'scores/index.html', context)
     #
     # return render(
     #     request,
@@ -24,3 +24,11 @@ def index(request):
     #     context
     # )
     # return HttpResponse("Hello, world. Scores index page.")
+
+
+def submit(request):
+    actors = context['actors']
+    end_name = request.POST['end-name']
+    match = actors.filter(primary_name__iexact=end_name)
+
+    return HttpResponse('This is a stub: ' + end_name)
