@@ -22,7 +22,6 @@ DIR_PATH = environ.Path(__file__) - 1
 FILE_PATH = str(DIR_PATH.path('data/graph_info.csv'))
 
 
-
 def generate_graph():
     """
     Generate a graph represented as a dictionary.
