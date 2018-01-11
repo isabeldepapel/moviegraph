@@ -220,11 +220,11 @@ def search_graph(graph, search_for, start_from=KEVIN_BACON_ID):
     # translate ids into objects
     for step in path_ids:
         actor_id = step[0]
-        movie_id = list(step[1])[0]
+        movie_ids = list(step[1])
 
         new_path.append(
             (Name.objects.get(id=actor_id),
-             Title.objects.get(id=movie_id))
+             [Title.objects.get(id=movie_id) for movie_id in movie_ids])
         )
 
     return new_path
