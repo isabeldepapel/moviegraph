@@ -1,41 +1,59 @@
 from django.test import TestCase
 
-from .graph import generate_graph
-from .models import Title, Principal, Name
+from .graph import bfs, get_path
+from collections import deque
 
+GRAPH1 = {
+    0: {1: set('a'), 2: set('b')},
+    1: {0: set('a')},
+    2: {0: set('b')},
+    3: {4: set('c')},  # nodes 3 & 4 not connected to other nodes
+    4: {3: set('c')}
+}
 
-# Create your tests here.
-MOVIES = range(3)
-
-CAST = {0: ['a', 'b', 'c'],
-        1: ['a', 'b'],
-        2: ['d', 'e']}
-
-GRAPH = {'a': {'b': set(0, 1), 'c': set(0)},
-         'b': {'a': set(0, 1), 'c': set(0)},
-         'c': {'a': set(0), 'b': set(0)},
-         'd': {'e': set(2)},
-         'e': {'e': set(2)}}
+GRAPH2 = {
+    0: {1: set(['a', 'x']), 2: set('b'), 3: set('b'), 4: set('a')},
+    1: {0: set(['a', 'x']), 4: set('a'), 2: set('c')},
+    2: {0: set('b'), 1: set('c'), 3: set('b')},
+    3: {0: set('b'), 2: set('b'), 5: set('d')},
+    4: {0: set('a'), 1: set('a')},
+    5: {3: set('d')}
+}
 
 
 class GraphTests(TestCase):
+    """Test bfs and find_path functions."""
 
-    def test_each_movie_actor_is_a_node(self):
+    def test_bfs_finds_connected_node(self):
         """
-        generate_graph creates one node for each movie actor.
+        BFS returns dict of prev_nodes if found.
 
-        Doesn't take into account all actors (only those in movies).
+        Prev nodes is a dict where node is key, and tuple of node it came from
+        and the edge name as its value.
         """
-        movie_actors = set()
+        result = bfs(GRAPH1, 0, 2)
+        self.assertNotEqual(result, {})
+        self.assertEqual(result[1], (0, set('a')))
+        self.assertEqual(result[2], (0, set('b')))
 
-        movies = Title.objects.filter(title_type='movie')
+    def test_bfs_doesnt_find_unconnected_node(self):
+        """BFS returns empty dict if node not found."""
+        result = bfs(GRAPH1, 0, 3)
+        self.assertEqual(result, {})
 
-        for movie in movies:
-            cast = Principal.objects.filter(title_id=movie.id)
-            cast = set([castperson.name_id for castperson in cast])
-            movie_actors = movie_actors | cast
+    def test_get_path_returns_shortest_path(self):
+        """Returns a list of tuples (node, edge) that recreate path."""
+        path0_to_2 = get_path(bfs(GRAPH1, 0, 2), 0, 2)
+        self.assertEqual(len(path0_to_2), 1)
 
-        num_actors = len(movie_actors)
+        path1_to_2 = get_path(bfs(GRAPH1, 1, 2), 1, 2)
+        self.assertEqual(len(path1_to_2), 2)
 
-        moviegraph = generate_graph()
-        self.assertIs(len(moviegraph), num_actors)
+        expected_path = deque([(1, set('a')), (0, set('b'))])
+        self.assertEqual(path1_to_2, expected_path)
+
+        path4_to_2 = get_path(bfs(GRAPH2, 4, 2), 4, 2)
+        self.assertEqual(len(path4_to_2), 2)
+
+        path1_to_5 = get_path(bfs(GRAPH2, 1, 5), 1, 5)
+        self.assertEqual(len(path1_to_5), 3)

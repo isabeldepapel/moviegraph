@@ -26,10 +26,10 @@ def generate_graph():
     """
     Generate a graph represented as a dictionary.
 
-    Actors as keys, vals are their neighbors (other actors).
+    Actor ids as keys, vals are their neighbors (other actors).
 
     Parallel edges are stored as a dict within a dict:
-    actors (neighbor nodes) are the keys, the movies(s) in
+    actor ids (neighbor nodes) are the keys, the movie ids in
     common (edges) are the values.
     """
     start = time.time()
@@ -132,16 +132,20 @@ def read_graph_from_csv(file_name=FILE_PATH):
     return graph
 
 
-def bfs(graph, end, start=KEVIN_BACON_ID):
+def bfs(graph, start, end):
     """
     Perform BFS on given graph from start to end nodes.
 
     Start and end are given as name_ids.
-    If there are multiple paths, returns one of them (??)
+    If there are multiple paths, returns one of them.
+
+    Returns a dictionary where keys are actor_ids, and vals are the nodes
+    that led there as a tuple of the form (actor_id, movie_id) to
+    track the specific edge for recreating the path.
     """
     # initialize queue
     queue = deque()
-    prev_node = {}  # keeps track of where you come from (recreate path)
+    prev_nodes = {}  # keeps track of where you come from (recreate path)
 
     queue.append(start)
 
@@ -151,11 +155,19 @@ def bfs(graph, end, start=KEVIN_BACON_ID):
         neighbors = graph[current]
 
         for neighbor in neighbors:
+            # print(neighbor)
             # if neighbor hasn't been visited, add to queue
             # and mark the node you visit it from
-            if neighbor not in prev_node:
+            if neighbor not in prev_nodes:
+                # add node you come from (and its edge)
+                prev_nodes[neighbor] = (current, graph[current][neighbor])
+
+                if neighbor == end:
+                    return prev_nodes
+                # add to queue
                 queue.append(neighbor)
-                prev_node[neighbor] = (current, graph[current][neighbor])
+
+    return {}
 
 
 def get_path(prev_nodes, start, end, reverse=False):
@@ -172,14 +184,47 @@ def get_path(prev_nodes, start, end, reverse=False):
     movies = prev[1]
     path = deque()
 
+    path.appendleft((actor, movies))
+
     # refactor to optimize with append/appendleft instead of reversing
     while actor != start:
-        path.appendleft((actor, movies))
+        # path.appendleft((actor, movies))
         prev = prev_nodes[actor]
         actor = prev[0]
         movies = prev[1]
+        path.appendleft((actor, movies))
 
     if reverse:
         path.reverse()
 
     return path
+
+
+def search_graph(graph, search_for, start_from=KEVIN_BACON_ID):
+    """
+    Use bfs and get_path to search graph for given actor_id.
+
+    Defaults to starting from Kevin Bacon.
+
+    Returns a list of tuples of the form (name obj, title obj)
+    """
+    prev_nodes = bfs(graph, start_from, search_for)
+
+    # if no possible path, return empty list
+    if prev_nodes == {}:
+        return []
+
+    path_ids = get_path(prev_nodes, start_from, search_for)
+    new_path = []
+
+    # translate ids into objects
+    for step in path_ids:
+        actor_id = step[0]
+        movie_id = list(step[1])[0]
+
+        new_path.append(
+            (Name.objects.get(id=actor_id),
+             Title.objects.get(id=movie_id))
+        )
+
+    return new_path
