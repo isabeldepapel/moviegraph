@@ -32,7 +32,7 @@ class Title(models.Model):
 
 class Name(models.Model):
     id = models.CharField(max_length=9, primary_key=True)
-    primary_name = models.CharField(max_length=200)
+    primary_name = models.CharField(db_index=True, max_length=200)
     birth_year = models.PositiveSmallIntegerField(null=True)
     death_year = models.PositiveSmallIntegerField(null=True)
     professions = models.TextField(null=True)
