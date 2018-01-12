@@ -25,9 +25,19 @@
   <ul>
   {% for step in path %}
     <li>
-      {{ step }}
+      {{ step.0.primary_name }}
     </li>
+    <ul>
+    {% for movie in step.1 %}
+      <li>
+        {{ movie.primary_title }}, {{ movie.start_year }}
+      </li>
+    {% endfor %}
+    </ul>
   {% endfor %}
+    <li>
+      {{ search_for }}
+    </li>
   </ul>
 {% endif %}
 </section>
