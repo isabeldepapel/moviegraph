@@ -2,9 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-from .graph import read_graph_from_csv
+from .graph import read_graph_from_csv, search_graph
 from .models import Name
 from django.db.models import Q
+
+# GRAPH = read_graph_from_csv()
+GRAPH = 10
 
 
 # helper function
@@ -26,11 +29,11 @@ def capitalize(text):
 # Create your views here.
 def index(request):
     """View function for main/home page."""
+    global GRAPH
     # generate graph of actors and movies
-    graph = read_graph_from_csv()
-    context = {'graph': graph}
+    # graph = read_graph_from_csv()
 
-    return render(request, 'scores/index.html', context)
+    return render(request, 'scores/index.html')
 
     # return HttpResponse("Hello, world. Scores index page.")
 
@@ -59,7 +62,7 @@ def validate_name(request):
     data = {}
 
     # TODO check if name in graph (if cached)
-    if actor_list.count() == 0:
+    if actor_list.count() == 0 or actor_list[0].id not in GRAPH:
         data['error_message'] = 'Not a valid name.'
         data['status'] = 'false'
         print(JsonResponse)
@@ -73,36 +76,33 @@ def validate_name(request):
         return JsonResponse(data)
 
 
-def score(request):
-    """
-    Search graph and calculate Bacon score.
-
-    Returns a list of things to render.
-    """
-
-
 def submit(request):
-    search_for = request.POST['search-for']
-
+    search_for = request.GET['search-for']
+    print(search_for)
+    global GRAPH
     # filter for name in actors/actresses
     match = Name.objects.filter(
         Q(primary_name=search_for) &
+        Q(birth_year__isnull=False) &
         (Q(professions__icontains='actor') |
          Q(professions__icontains='actress'))
     )
-    # actors.filter(primary_name__iexact=end_name)
+
     context = {}
     # check if no results
-    if match.count() == 0:
+    if match.count() == 0 or match[0].id not in GRAPH:
         context['error_message'] = 'Not a valid name: ' + search_for
         return render(request, 'scores/index.html', context)
     else:
         actor = match[0]
-        context['search_for'] = search_for
-        context['actor_id'] = actor.id
-        context['actor_name'] = actor.primary_name
-        context['actor_birth_year'] = actor.birth_year
-        context['actor_professions'] = actor.professions
+        # graph = read_graph_from_csv()
+        print(GRAPH[actor.id])
+        path = search_graph(GRAPH, actor.id)
+        print(path)
+        print(len(path))
+
+        context['path'] = path
+
         return render(request, 'scores/index.html', context)
 
     # return HttpResponse('This is a stub: ' + end_name)
