@@ -8,18 +8,17 @@
   </p>
 {% endif %}
 
-<form action="submit" method="post" id="search-graph">
-  {% csrf_token %}
+<form action="{% url 'scores:validate_name' %}" method="get" id="search-graph-form">
 
-  <input type="text" name="start_name" value="Kevin Bacon" disabled />
-  <label for="end-name">Name</label>
-  <input type="search" name="end-name" id="end-name" placeholder="Name"/>
-  <button type="submit" class="button">Search</button>
+  <input type="search" name="start_from" value="Kevin Bacon" disabled />
+  <label for="search-for">Name</label>
+  <input type="search" name="search-for" id="search-for" placeholder="Name"/>
+  <button type="submit" class="button" id="search-graph">Search</button>
 </form>
 
-{% if end_name %}
+{% if search_for %}
   <p>
-    Searching for {{ end_name }}
+    Searching for {{ search_for }}
   </p>
   <p>
     Name: {{ actor_name }}
@@ -31,5 +30,9 @@
     Born: {{ actor_birth_year}}
   </p>
 {% endif %}
+
+{% endblock %}
+
+{% block javascript %}
 
 {% endblock %}
