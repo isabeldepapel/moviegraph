@@ -10,13 +10,13 @@
   </head>
   <body class="grid-x grid-padding-x">
     <header class="small-12 cell">
-      <h1>Movie Meets Graph</h1>
+      <h1>Movie + Graph</h1>
     </header>
-    <main class="small-12 cell">
+    <main class="small-12 cell grid-x">
       <section class="error">
 
       </section>
-      
+
       {% block content %}
       {% endblock %}
 
@@ -26,7 +26,7 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-    <script src="{% static 'scores/app.js' %}"></script>
+
     {% block javascript %}
     {% endblock %}
   </body>

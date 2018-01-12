@@ -8,31 +8,29 @@
   </p>
 {% endif %}
 
-<form action="{% url 'scores:validate_name' %}" method="get" id="search-graph-form">
+<!-- <form action="{% url 'scores:validate_name' %}" method="get" id="search-graph-form"> -->
+<form class="grid-x small-12 cell" action="{% url 'scores:submit' %}" method="get" id="search-graph-form">
 
   <input type="search" name="start_from" value="Kevin Bacon" disabled />
   <label for="search-for">Name</label>
   <input type="search" name="search-for" id="search-for" placeholder="Name"/>
-  <button type="submit" class="button" id="search-graph">Search</button>
+  <button type="submit" class="button small-6 medium-3 large-2 cell" id="search-graph">Search</button>
 </form>
 
-{% if search_for %}
+<section class="path">
+{% if path %}
   <p>
-    Searching for {{ search_for }}
+    Bacon Score: {{ path|length }}
   </p>
-  <p>
-    Name: {{ actor_name }}
-  </p>
-  <p>
-    Id: {{ actor_id }}
-  </p>
-  <p>
-    Born: {{ actor_birth_year}}
-  </p>
+  <ul>
+  {% for step in path %}
+    <li>
+      {{ step }}
+    </li>
+  {% endfor %}
+  </ul>
 {% endif %}
+</section>
 
-{% endblock %}
-
-{% block javascript %}
 
 {% endblock %}
