@@ -1,3 +1,35 @@
 section.error, body p.error {
   color: red;
 }
+
+header {
+  background-color: #183059;
+}
+
+h1 {
+  color: #EB5E28;
+  font-family: 'Orbitron', Arial, sans-serif;
+  font-size: 3.5rem;
+  margin: 0;
+  padding-top: .8rem;
+  padding-bottom: .7rem;
+}
+
+form, button, footer, h2, h3, h4, h5, h6, p, a {
+  font-family: 'Jura', Arial, sans-serif;
+}
+
+form {
+  padding-top: 2rem;
+}
+
+#search-graph-form > input {
+  border-radius: 2px;
+}
+
+form > button#search-graph {
+  border: #EB5E28 1.25px solid;
+  border-radius: 5px;
+  color: #EB5E28;
+  background-color: transparent;
+}
