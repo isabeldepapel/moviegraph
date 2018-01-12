@@ -14,7 +14,7 @@ const checkName = function checkName(event) {
     console.log('success!');
     console.log(response);
 
-    
+
 
   }).fail(() => {
     const html = '<p class="error">Not a valid name.</p>';
@@ -34,5 +34,5 @@ const checkName = function checkName(event) {
 $(document).ready(() => {
   // $(document).foundation();
 
-  form.on('click', 'button', checkName);
+  // form.on('click', 'button', checkName);
 });
