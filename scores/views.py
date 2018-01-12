@@ -6,24 +6,31 @@ from .graph import read_graph_from_csv, search_graph
 from .models import Name
 from django.db.models import Q
 
+import string
+
 # GRAPH = read_graph_from_csv()
+# testing deploy
 GRAPH = 10
 
 
 # helper function
 def capitalize(text):
-    """Capitalize a given string."""
-    text = text.strip()
+    """
+    Capitalize a given string.
 
-    # if empty string, exit
-    if len(text) < 1:
-        return text
+    Uses python string lib, and then iterates through string to capitalize
+    any letters following a hyphen or apostrophe.
+    """
+    # split on space and capitalize
+    text = string.capwords(text)
+    capitalized = ''
 
-    s = text[0].upper()
-
-    for i in range(1, len(text) - 1):
-        # while not end of string or space or -
-        pass
+    # check for hyphen and apostrophe and capitalize
+    # iterate through len - 1 because will capitalize at (i + 1)
+    for i in range(len(text) - 1):
+        capitalized += text[i]
+        if text[i] == "-" or text[i] == "'":
+            pass
 
 
 # Create your views here.
@@ -102,6 +109,7 @@ def submit(request):
         print(len(path))
 
         context['path'] = path
+        context['search_for'] = actor
 
         return render(request, 'scores/index.html', context)
 
