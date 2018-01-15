@@ -44,7 +44,7 @@ DEBUG = env('DEBUG')
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
-    ALLOWED_HOSTS = ['moviegraph.34sgctqfye.us-west-2.elasticbeanstalk.com/']
+    ALLOWED_HOSTS = ['moviegraph-setup.fsfxaa2mct.us-west-2.elasticbeanstalk.com/']
 
 
 # Application definition
