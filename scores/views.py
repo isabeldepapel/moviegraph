@@ -10,7 +10,7 @@ import string
 
 # GRAPH = read_graph_from_csv()
 # testing deploy
-GRAPH = 10
+GRAPH = {}
 
 
 # helper function
