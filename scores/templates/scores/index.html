@@ -17,26 +17,88 @@
   <button type="submit" class="button small-6 medium-3 large-2 cell" id="search-graph">Search</button>
 </form>
 
-<section class="path">
+<section class="path grid-x small-12 cell align-center">
+  <ul class="actors grid-x small-12 cell align-center">
+    <li class="grid-x small-12 cell align-center">
+      <a href="http://imdb.com/name/nm0000102" target="_blank">
+        <div class="image-container">
+          <img src="https://image.tmdb.org/t/p/w185/rjX2Oz3tCZMfSwOoIAyEhdtXnTE.jpg" alt="photo of Kevin Bacon" class="images profile-photos"/>
+          <div class="overlay">Kevin Bacon</div>
+        </div>
+      </a>
+    </li>
+    <p>
+      was in
+    </p>
+    <ul class="movies grid-x small-12 cell align-center">
+      <li class="grid-x small-3 cell align-center">
+        <div class="poster-container">
+          <a href="http://www.imdb.com/title/tt1276104" target="_blank">
+            <img src="https://image.tmdb.org/t/p/w185/o4qXZMrZlfuTfwwNGMyTcx6p2uO.jpg" alt="poster of Looper" class="images posters" />
+          </a>
+        </div>
+        <div class="poster-overlay">
+          Looper, 2015
+        </div>
+      </li>
+      <li class="grid-x small-3 cell align-center">
+        <div class="poster-container">
+          <a href="http://www.imdb.com/title/tt1276104" target="_blank">
+            <img src="https://image.tmdb.org/t/p/w185/o4qXZMrZlfuTfwwNGMyTcx6p2uO.jpg" alt="poster of Looper" class="images posters" />
+          </a>
+        </div>
+        <div class="poster-overlay">
+          Looper, 2015
+        </div>
+      </li>
+    </ul>
+  </ul>
 {% if path %}
-  <p>
+  <p class="small-12 cell score">
     Bacon Score: {{ path|length }}
   </p>
-  <ul>
+  <ul class="actors grid-x small-12 cell align-center">
   {% for step in path %}
-    <li>
-      {{ step.0.primary_name }}
+    <li class="grid-x small-12 cell align-center overlay-container">
+      <div class="image-container">
+        <a href="http://imdb.com/name/{{ step.actor.0.id }}" target="_blank">
+            <img src="{{ step.actor.1 }}" alt="photo of {{ step.actor.0.primary_name }}" class="images profile-photos" />
+        </a>
+      </div>
+      <div class="overlay">
+        {{ step.actor.0.primary_name }}
+      </div>
     </li>
-    <ul>
-    {% for movie in step.1 %}
-      <li>
-        {{ movie.primary_title }}, {{ movie.start_year }}
+    <p class="connector">
+      was in
+    </p>
+    <ul class="movies grid-x small-12 cell align-center">
+    {% for movie in step.movies %}
+      <li class="grid-x small-3 cell align-center overlay-container">
+        <div class="poster-container">
+          <a href="http://imdb.com/title/{{ movie.0.id }}" target="_blank">
+            <img src="{{ movie.1 }}" alt="poster for {{ movie.0.primary_title }}" class="images posters" />
+          </a>
+        </div>
+        <div class="poster-overlay">
+          {{ movie.0.primary_title }}, {{ movie.0.start_year }}
+        </div>
       </li>
     {% endfor %}
     </ul>
+    <p class="connector">
+      with
+    </p>
   {% endfor %}
-    <li>
-      {{ search_for }}
+    <li class="grid-x small-12 cell align-center overlay-container">
+      <div class="image-container">
+        <a href="http://imdb.com/name/{{ path_end.0.id }}" target="_blank">
+          <img src="{{ path_end.1 }}" alt="photo of {{ path_end.0.primary_name }}" class="images profile-photos"/>
+        </a>
+      </div>
+      <div class="overlay">
+        {{ path_end.0.primary_name }}
+      </div>
     </li>
   </ul>
 {% endif %}

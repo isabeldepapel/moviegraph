@@ -33,3 +33,71 @@ form > button#search-graph {
   color: #EB5E28;
   background-color: transparent;
 }
+
+/**** IMAGES ****/
+.path .actors, .path .movies {
+  list-style: none;
+  margin-left: 0;
+}
+
+.image-container {
+  width: 10rem;
+  height: 10rem;
+  position: relative;
+}
+
+.profile-photos {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  object-position: center -7px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.overlay {
+  border-radius: 50%;
+  position: absolute;
+  height: 10rem;
+  width: 10rem;
+  top: 0;
+  text-align: center;
+  padding-top: 4.75rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+}
+
+.poster-container {
+  width: 10rem;
+  height: auto;
+}
+
+li .poster-container:hover + div.poster-overlay {
+  visibility: visible;
+}
+
+.overlay-container {
+  position: relative;
+}
+
+.poster-overlay {
+  position: absolute;
+  width: 10rem;
+  height: 15rem;
+  padding-top: 6rem;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  visibility: hidden;
+}
+
+
+.connector, .score {
+  margin-top: .75rem;
+  margin-bottom: .75rem;
+}
+
+.score {
+  text-align: center;
+  font-size: 1.5rem;
+}
