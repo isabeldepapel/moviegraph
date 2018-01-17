@@ -59,11 +59,6 @@ form > button#search-graph {
   object-position: center;
 }
 
-.imdb:hover + div.overlay {
-  visibility: hidden;
-}
-
-
 .overlay {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
@@ -76,15 +71,14 @@ form > button#search-graph {
   font-weight: bold;
 }
 
+.overlay:hover {
+  visibility: hidden;
+}
+
 .poster-container {
   width: 10rem;
   height: auto;
 }
-
-/* li .poster-container:hover + div.poster-overlay {
-  visibility: visible;
-} */
-
 
 .connector, .score {
   margin-top: .75rem;
@@ -93,5 +87,21 @@ form > button#search-graph {
 
 .score {
   font-size: 1.5rem;
+  text-align: center;
+}
+
+/***** FOOTER *****/
+body {
+  position: relative;
+}
+
+main {
+  padding-bottom: 4rem;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  height: 2rem;
   text-align: center;
 }
