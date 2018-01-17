@@ -20,43 +20,46 @@
 <section class="path grid-x small-12 cell align-center">
   <ul class="actors grid-x small-12 cell align-center">
     <li class="grid-x small-12 cell align-center">
-      <a href="http://imdb.com/name/nm0000102" target="_blank">
-        <div class="image-container">
+      <a href="http://imdb.com/name/nm0000102" target="_blank" class="imdb">
+        <div class="image-container photo">
           <img src="https://image.tmdb.org/t/p/w185/rjX2Oz3tCZMfSwOoIAyEhdtXnTE.jpg" alt="photo of Kevin Bacon" class="images profile-photos"/>
-          <div class="overlay">Kevin Bacon</div>
+          <div class="overlay grid-x align-middle">
+            <span class="overlay-text small-12 cell">Kevin Bacon</span>
+          </div>
         </div>
       </a>
     </li>
-    <p>
+    <p class="connector">
       was in
     </p>
     <ul class="movies grid-x small-12 cell align-center">
       <li class="grid-x small-3 cell align-center">
-        <div class="poster-container">
-          <a href="http://www.imdb.com/title/tt1276104" target="_blank">
+        <a href="http://www.imdb.com/title/tt1276104" target="_blank" class="imdb">
+          <div class="image-container poster">
             <img src="https://image.tmdb.org/t/p/w185/o4qXZMrZlfuTfwwNGMyTcx6p2uO.jpg" alt="poster of Looper" class="images posters" />
-          </a>
-        </div>
-        <div class="poster-overlay">
-          Looper, 2015
-        </div>
+            <div class="overlay grid-x align-middle">
+              <span class="overlay-text small-12 cell">Looper, 2015</span>
+            </div>
+          </div>
+        </a>
+
       </li>
       <li class="grid-x small-3 cell align-center">
-        <div class="poster-container">
-          <a href="http://www.imdb.com/title/tt1276104" target="_blank">
-            <img src="https://image.tmdb.org/t/p/w185/o4qXZMrZlfuTfwwNGMyTcx6p2uO.jpg" alt="poster of Looper" class="images posters" />
-          </a>
-        </div>
-        <div class="poster-overlay">
-          Looper, 2015
-        </div>
+        <a href="http://www.imdb.com/title/tt1276104" target="_blank" class="imdb">
+          <div class="image-container poster">
+            <img src="https://image.tmdb.org/t/p/w185/6u1fYtxG5eqjhtCPDx04pJphQRW.jpg" alt="poster of Looper" class="images posters" />
+            <div class="overlay grid-x align-middle">
+              <span class="overlay-text small-12 cell">The Empire Strikes Back, 1980</span>
+            </div>
+          </div>
+        </a>
       </li>
     </ul>
   </ul>
 {% if path %}
-  <p class="small-12 cell score">
+  <h3 class="small-12 cell score">
     Bacon Score: {{ path|length }}
-  </p>
+  </h3>
   <ul class="actors grid-x small-12 cell align-center">
   {% for step in path %}
     <li class="grid-x small-12 cell align-center overlay-container">
