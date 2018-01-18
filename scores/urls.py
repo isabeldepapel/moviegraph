@@ -7,6 +7,6 @@ app_name = 'scores'
 urlpatterns = [
     path('', views.index, name='index'),
     path('index', views.index, name='index'),
-    path('validate_name', views.validate_name, name='validate_name'),
+    path('validate', views.validate, name='validate'),
     path('submit', views.submit, name='submit'),
 ]

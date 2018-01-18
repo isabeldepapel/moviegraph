@@ -30,6 +30,8 @@ def capitalize(text):
     any letters following a hyphen or apostrophe.
 
     Input is always a string.
+
+    Returns empty string if input is whitespace.
     """
     # trim whitespace and check for non-blank input
     text = text.strip()
@@ -116,7 +118,7 @@ def validate(request):
 
     Won't render.
     """
-    search_for = request.GET.get('search-for', default='')
+    search_for = capitalize(request.GET.get('search-for', default=''))
     print(request)
     print(request.GET)
 
