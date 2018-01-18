@@ -1,6 +1,9 @@
+"""Tests for graph module and helper function (capitalize) for views."""
+
 from django.test import TestCase
 
 from .graph import bfs, get_path
+from .views import capitalize
 from collections import deque
 
 GRAPH1 = {
@@ -57,3 +60,91 @@ class GraphTests(TestCase):
 
         path1_to_5 = get_path(bfs(GRAPH2, 1, 5), 1, 5)
         self.assertEqual(len(path1_to_5), 3)
+
+
+class ViewTests(TestCase):
+    """Tests capitalize helper function."""
+
+    def test_capitalize_capitalizes_words(self):
+        """
+        Capitalizes one or multiple words in a string.
+
+        Handles mixed case input.
+        """
+        cats = ['cat', 'CAT', 'cAt', 'CaT']
+        cap_cat = 'Cat'
+
+        for cat in cats:
+            self.assertEqual(capitalize(cat), cap_cat)
+
+        multi_words = 'quick brown fox jumped'
+        cap_multi_words = 'Quick Brown Fox Jumped'
+
+        self.assertEqual(capitalize(multi_words), cap_multi_words)
+
+    def test_capitalize_strips_extra_spaces(self):
+        """
+        Trims leading and trailing whitespace.
+
+        Also deletes extra whitespace between words.
+        """
+        words = ['   cat cow', '  cat cow  ', ' cat  cow']
+        cap_words = 'Cat Cow'
+
+        for word in words:
+            self.assertEqual(capitalize(word), cap_words)
+
+    def test_capitalize_capitalizes_after_hyphens(self):
+        """
+        Capitalizes following a hyphen.
+
+        Works with multiple hyphens, but won't strip extra hyphens.
+        """
+        words = ['cat-cow', ' cat-cow  ']
+        cap_words = 'Cat-Cow'
+
+        for word in words:
+            self.assertEqual(capitalize(word), cap_words)
+
+        multi_hyphen = 'cat-cow-cat'
+        cap_multi_hyphen = 'Cat-Cow-Cat'
+
+        self.assertEqual(capitalize(multi_hyphen), cap_multi_hyphen)
+
+        extra_hyphens = 'cat--cow'
+        cap_extra_hyphens = 'Cat--Cow'
+
+        self.assertEqual(capitalize(extra_hyphens), cap_extra_hyphens)
+
+    def test_capitalize_capitalizes_after_apostrophes(self):
+        """
+        Capitalizes following an apostrophe.
+
+        Works with multiple apostrophes, but won't strip extras.
+        """
+        words = ["o'toole", "  o'toole "]
+        cap_words = "O'Toole"
+
+        for word in words:
+            self.assertEqual(capitalize(word), cap_words)
+
+        multi_apost = "o'toole'toole"
+        cap_multi_apost = "O'Toole'Toole"
+
+        self.assertEqual(capitalize(multi_apost), cap_multi_apost)
+
+        extra_apost = "o''toole"
+        cap_extra_apost = "O''Toole"
+
+        self.assertEqual(capitalize(extra_apost), cap_extra_apost)
+
+    def test_capitalize_handles_blank_input(self):
+        """
+        Returns an empty string if given blank input.
+
+        Handles empty string or multiple spaces.
+        """
+        blanks = ['', ' ', '     ']
+
+        for blank in blanks:
+            self.assertEqual(capitalize(blank), '')

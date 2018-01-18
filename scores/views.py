@@ -7,10 +7,10 @@ from .images import get_actor_image, get_movie_image
 from .models import Name
 from django.db.models import Q
 
-import string
+# import string
 
 testing = False
-# testing = True  # to test deploy
+testing = True  # to test deploy
 if testing:
     GRAPH = {}
 else:
@@ -24,12 +24,33 @@ def capitalize(text):
     """
     Capitalize a given string.
 
-    Uses python string lib, and then iterates through string to capitalize
+    Uses strip and split to eliminate any excess space
+    before/after and between text and then iterates
+    through the new string to capitalize
     any letters following a hyphen or apostrophe.
+
+    Input is always a string.
     """
+    # trim whitespace and check for non-blank input
+    text = text.strip()
+    if len(text) < 1:
+        return ''
+
     # split on space and capitalize
-    text = string.capwords(text)
+    words = text.split()
+    new_text = []
+
+    for word in words:
+        if len(word) > 1:
+            new_word = word[0].upper() + word[1:].lower()
+        else:
+            new_word = word[0].upper()
+        new_text.append(new_word)
+    text = ' '.join(new_text)
+
+    # text = string.capwords(text)
     capitalized = ''
+
     to_upper = False  # tracks whether letter needs to be capitalized
 
     # check for hyphen and apostrophe and capitalize
@@ -86,7 +107,7 @@ def index(request):
     # return HttpResponse("Hello, world. Scores index page.")
 
 
-def validate_name(request):
+def validate(request):
     """
     Validate actor name exists in database before searching.
 
@@ -95,7 +116,7 @@ def validate_name(request):
 
     Won't render.
     """
-    search_for = request.GET.get('search-for', None)
+    search_for = request.GET.get('search-for', default='')
     print(request)
     print(request.GET)
 
@@ -125,7 +146,8 @@ def validate_name(request):
 
 
 def submit(request):
-    search_for = request.GET['search-for']
+    search_for = request.GET.get('search_for', default='')
+    # search_for = capitalize(request.GET['search-for'])
     print(search_for)
     global GRAPH
     # filter for name in actors/actresses
