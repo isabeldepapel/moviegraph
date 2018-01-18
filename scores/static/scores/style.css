@@ -34,6 +34,11 @@ form > button#search-graph {
   background-color: transparent;
 }
 
+#search-graph:hover {
+  background-color: #EB5E28;
+  color: white;
+}
+
 /**** IMAGES ****/
 .path .actors, .path .movies {
   list-style: none;
@@ -71,9 +76,17 @@ form > button#search-graph {
   font-weight: bold;
 }
 
-.overlay:hover {
+.overlay-text p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+a.imdb:hover + div.overlay {
   visibility: hidden;
 }
+/* .overlay:hover {
+  visibility: hidden;
+} */
 
 .poster-container {
   width: 10rem;
