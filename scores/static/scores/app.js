@@ -133,7 +133,7 @@ const checkName = function checkName(event) {
 $(document).ready(() => {
   // $(document).foundation();
 
-  form.on('click', 'button', checkName);
+  // form.on('click', 'button', checkName);
 
   $('.path').on('mouseenter', '.image-container', hideOverlay);
   $('.path').on('mouseleave', '.image-container', showOverlay);

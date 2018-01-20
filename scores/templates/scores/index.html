@@ -9,7 +9,7 @@
   </p>
 {% endif %}
 
-<form class="grid-x small-12 cell" action="{% url 'scores:validate' %}" method="get" id="search-graph-form">
+<form class="grid-x small-12 cell" action="{% url 'scores:submit' %}" method="get" id="search-graph-form">
 
   <input type="search" name="start_from" value="Kevin Bacon" disabled />
   <label for="search-for">Name</label>
@@ -59,11 +59,11 @@
       </li>
     </ul>
   </ul> -->
-<!-- {% if path %} -->
-  <!-- <h3 class="small-12 cell score">
+{% if path %}
+  <h3 class="small-12 cell score">
     Bacon Score: {{ path|length }}
-  </h3> -->
-  <!-- <ul class="actors grid-x small-12 cell align-center">
+  </h3>
+  <ul class="actors grid-x small-12 cell align-center">
   {% for step in path %}
     <li class="grid-x small-12 cell align-center">
       <div class="image-container photo">
@@ -110,8 +110,8 @@
         </a>
       </div>
     </li>
-  </ul> -->
-<!-- {% endif %} -->
+  </ul>
+{% endif %}
 </section>
 
 
