@@ -46,7 +46,7 @@ def get_actor_image(name):
     the first person in the list. TMDB results are sorted by
     popularity, so first match is likely to be the one wanted.
 
-    Returns the full image url.
+    Returns the full image url or none if no file path exists.
     """
     search = tmdb.Search()
     search.person(query=name)
@@ -54,7 +54,10 @@ def get_actor_image(name):
     # get profile image for first result
     file_path = search.results[0]['profile_path']
 
-    return ''.join([BASE_URL, FILE_SIZE, file_path])
+    if file_path:
+        return ''.join([BASE_URL, FILE_SIZE, file_path])
+    else:
+        return None
 
 
 def get_movie_image(title):
@@ -63,6 +66,8 @@ def get_movie_image(title):
 
     If more than one result (likely), gets the file path for
     the first movie in the list.
+
+    Returns the full image url or none if no file path exists.
     """
     search = tmdb.Search()
     search.movie(query=title)
@@ -70,4 +75,7 @@ def get_movie_image(title):
     # get poster image for first result
     file_path = search.results[0]['poster_path']
 
-    return ''.join([BASE_URL, FILE_SIZE, file_path])
+    if file_path:
+        return ''.join([BASE_URL, FILE_SIZE, file_path])
+    else:
+        return None
