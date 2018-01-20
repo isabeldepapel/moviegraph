@@ -28,6 +28,12 @@
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
+    <script type="text/javascript">
+      var anonImageUrl = "{% static 'scores/images/profile.jpg' %}";
+    </script>
+
+    <script src="{% static 'scores/app.js' %}" type="text/javascript"></script>
+
     {% block javascript %}
     {% endblock %}
   </body>

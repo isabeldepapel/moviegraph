@@ -1,4 +1,5 @@
 {% extends 'scores/base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -8,8 +9,7 @@
   </p>
 {% endif %}
 
-<!-- <form action="{% url 'scores:validate_name' %}" method="get" id="search-graph-form"> -->
-<form class="grid-x small-12 cell" action="{% url 'scores:submit' %}" method="get" id="search-graph-form">
+<form class="grid-x small-12 cell" action="{% url 'scores:validate' %}" method="get" id="search-graph-form">
 
   <input type="search" name="start_from" value="Kevin Bacon" disabled />
   <label for="search-for">Name</label>
@@ -18,7 +18,11 @@
 </form>
 
 <section class="path grid-x small-12 cell align-center">
+  <h3 class="small-12 cell score"></h3>
   <ul class="actors grid-x small-12 cell align-center">
+  </ul>
+
+  <!-- <ul class="actors grid-x small-12 cell align-center">
     <li class="grid-x small-12 cell align-center">
       <div class="image-container photo">
         <a href="http://imdb.com/name/nm0000102" target="_blank" class="imdb">
@@ -54,20 +58,24 @@
         </div>
       </li>
     </ul>
-  </ul>
-{% if path %}
-  <h3 class="small-12 cell score">
+  </ul> -->
+<!-- {% if path %} -->
+  <!-- <h3 class="small-12 cell score">
     Bacon Score: {{ path|length }}
-  </h3>
-  <ul class="actors grid-x small-12 cell align-center">
+  </h3> -->
+  <!-- <ul class="actors grid-x small-12 cell align-center">
   {% for step in path %}
     <li class="grid-x small-12 cell align-center">
       <div class="image-container photo">
         <a href="http://www.imdb.com/name/{{ step.actor.0.id }}" target="_blank">
+          {% if step.actor.1 %}
             <img src="{{ step.actor.1 }}" alt="photo of {{ step.actor.0.primary_name }}" class="images profile-photos" />
-            <div class="overlay grid-x align-middle">
-              <span class="overlay-text small-12 cell"><p>{{ step.actor.0.primary_name }}</p></span>
-            </div>
+          {% else %}
+            <img src="{% static 'scores/images/profile.jpg' %}" alt="no photo available" class="images profile-photos" />
+          {% endif %}
+          <div class="overlay grid-x align-middle">
+            <span class="overlay-text small-12 cell"><p>{{ step.actor.0.primary_name }}</p></span>
+          </div>
         </a>
       </div>
     </li>
@@ -102,8 +110,8 @@
         </a>
       </div>
     </li>
-  </ul>
-{% endif %}
+  </ul> -->
+<!-- {% endif %} -->
 </section>
 
 
