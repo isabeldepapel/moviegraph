@@ -59,3 +59,32 @@ class Principal(models.Model):
         s = str(self.name) + " in title: " + str(self.title)
 
         return s
+
+
+class Graph(models.Model):
+    """
+    Table that contains graph info.
+
+    Name, Costar, and all titles they have in common.
+    """
+
+    id = models.IntegerField(primary_key=True)
+    star = models.ForeignKey(
+        Name,
+        on_delete=models.CASCADE,
+        related_name='star'
+    )
+    costar = models.ForeignKey(
+        Name,
+        on_delete=models.CASCADE,
+        related_name='costar'
+    )
+    titles = models.TextField()
+
+    def __str__(self):
+        s = str(self.star) + " with " + str(self.costar) + " in: "
+
+        for title in self.titles.split(','):
+            s += str(title)
+
+        return s
