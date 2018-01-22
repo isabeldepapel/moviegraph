@@ -5,7 +5,7 @@ Default is only actors, and only movies.
 """
 
 from django.db.models import Q
-from .models import Title, Name, Principal
+from .models import Title, Name, Principal, Graph
 from collections import deque
 
 import time
@@ -19,7 +19,8 @@ KEVIN_BACON = Name.objects.filter(
 KEVIN_BACON_ID = 'nm0000102'
 
 DIR_PATH = environ.Path(__file__) - 1
-FILE_PATH = str(DIR_PATH.path('data/graph_info.csv'))
+# FILE_PATH = str(DIR_PATH.path('data/graph_info.csv'))
+FILE_PATH = str(DIR_PATH.path('data/graph.csv'))
 
 
 def generate_graph():
@@ -87,22 +88,39 @@ def generate_graph():
     return graph
 
 
+# def write_graph_to_csv(graph):
+#     """Write graph info to a csv to read from later."""
+#     start = time.time()
+#
+#     with open(FILE_PATH, 'w', newline='') as csvfile:
+#         writer = csv.writer(csvfile, delimiter='\t')
+#         for actor_id, neighbors in graph.items():
+#             row = [actor_id]
+#
+#             for neighbor_id, movies in neighbors.items():
+#                 s = ''
+#                 s += neighbor_id + ','
+#                 s += ','.join(movie for movie in movies)
+#                 row.append(s)
+#
+#             writer.writerow(row)
+#
+#     print(time.time() - start)
+#     print('it took {0:0.1f} seconds'.format(time.time() - start))
 def write_graph_to_csv(graph):
     """Write graph info to a csv to read from later."""
     start = time.time()
+    count = 1  # set up pk
 
     with open(FILE_PATH, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
         for actor_id, neighbors in graph.items():
-            row = [actor_id]
 
             for neighbor_id, movies in neighbors.items():
-                s = ''
-                s += neighbor_id + ','
-                s += ','.join(movie for movie in movies)
-                row.append(s)
+                movie_list = ','.join(movie for movie in movies)
 
-            writer.writerow(row)
+                writer.writerow([count, actor_id, neighbor_id, movie_list])
+                count += 1
 
     print(time.time() - start)
     print('it took {0:0.1f} seconds'.format(time.time() - start))
@@ -183,9 +201,7 @@ def get_path(prev_nodes, start, end):
 
     path.appendleft((actor, movies))
 
-    # refactor to optimize with append/appendleft instead of reversing
     while actor != start:
-        # path.appendleft((actor, movies))
         prev = prev_nodes[actor]
         actor = prev[0]
         movies = prev[1]
@@ -215,6 +231,77 @@ def search_graph(graph, search_for, start_from=KEVIN_BACON_ID):
     for step in path_ids:
         actor_id = step[0]
         movie_ids = list(step[1])
+
+        new_path.append(
+            (Name.objects.get(id=actor_id),
+             [Title.objects.get(id=movie_id) for movie_id in movie_ids])
+        )
+
+    return new_path
+
+
+def bfs2(start, end):
+    """
+    Perform BFS on graph table from start to end nodes.
+
+    Start and end are given as name_ids.
+    If there are multiple paths, returns one of them.
+
+    Returns a dictionary where keys are actor_ids, and vals are the nodes
+    that led there as a tuple of the form (actor_id, movie_id) to
+    track the specific edge for recreating the path.
+    """
+    # initialize queue
+    queue = deque()
+    prev_nodes = {}  # keeps track of where you come from (recreate path)
+
+    queue.append(start)
+
+    while len(queue) > 0:
+        current = queue.popleft()
+
+        connections = Graph.objects.filter(star_id=current)
+        # neighbors = graph[current]
+
+        for connection in connections:
+            # print(neighbor)
+            # if neighbor hasn't been visited, add to queue
+            # and mark the node you visit it from
+            costar = connection.costar_id
+            if costar not in prev_nodes:
+                # add node you come from (and its edge)
+                prev_nodes[costar] = (current, connection.titles)
+
+                if costar == end:
+                    return prev_nodes
+                # add to queue
+                queue.append(costar)
+
+    return {}
+
+
+def search_graph2(search_for, start_from=KEVIN_BACON_ID):
+    """
+    Use bfs2 and get_path to search graph for given actor_id.
+
+    Defaults to starting from Kevin Bacon.
+
+    Returns a list of tuples of the form (name obj, title obj)
+    """
+    prev_nodes = bfs2(start_from, search_for)
+
+    # if no possible path, return empty list
+    if prev_nodes == {}:
+        return []
+
+    path_ids = get_path(prev_nodes, start_from, search_for)
+    new_path = []
+
+    # translate ids into objects
+    for step in path_ids:
+        actor_id = step[0]
+        # movie_ids = list(step[1])
+        movie_ids = step[1].split(',')
 
         new_path.append(
             (Name.objects.get(id=actor_id),

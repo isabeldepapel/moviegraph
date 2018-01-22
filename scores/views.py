@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-from .graph import read_graph_from_csv, search_graph
+from .graph import read_graph_from_csv, search_graph, search_graph2
 from .images import get_actor_image, get_movie_image
-from .models import Name
+from .models import Name, Graph
 from django.db.models import Q
 
 # import string
@@ -179,6 +179,47 @@ def validate(request):
         data['actor_id'] = actor.id
         print(JsonResponse)
         return JsonResponse(data)
+
+
+def search(request):
+    print(request.GET)
+    search_for = capitalize(request.GET.get('search-for', default=''))
+    print(search_for)
+
+    context = {}
+
+    results = Name.objects.filter(
+        Q(primary_name=search_for) &
+        Q(birth_year__isnull=False) &
+        (Q(professions__icontains='actor') |
+         Q(professions__icontains='actress'))
+    )
+
+    print(results[0])
+    print(results[0].id)
+    # if not a valid name
+    if results.count() == 0:
+        context['error_message'] = 'Not a valid name: ' + search_for
+        return render(request, 'scores/index.html', context)
+    # if not in graph (e.g. tv actor)
+    elif not Graph.objects.filter(star_id=results[0].id).exists():
+        context['error_message'] = 'No data available for ' + search_for
+        return render(request, 'scores/index.html', context)
+
+    actor = results[0]
+    path = search_graph2(actor.id)
+    print(path)
+
+    path_with_images = get_images(path)
+    context['path'] = path_with_images
+    # context['search_for'] = actor
+
+    context['path_end'] = (
+        actor,
+        get_actor_image(actor.primary_name)
+    )
+
+    return render(request, 'scores/index.html', context)
 
 
 def submit(request):
