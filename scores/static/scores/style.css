@@ -4,6 +4,7 @@ section.error, body p.error {
 
 header {
   background-color: #183059;
+  max-height: 6rem;
 }
 
 h1 {
@@ -32,11 +33,13 @@ form > button#search-graph {
   border-radius: 5px;
   color: #EB5E28;
   background-color: transparent;
+  font-size: 1rem;
 }
 
-#search-graph:hover {
+#search-graph:hover, #search-graph:focus {
   background-color: #EB5E28;
   color: white;
+  font-weight: bolder;
 }
 
 /**** IMAGES ****/
@@ -79,14 +82,8 @@ form > button#search-graph {
 .overlay-text p {
   margin-top: 0;
   margin-bottom: 0;
+  font-size: 1.15rem;
 }
-
-a.imdb:hover + div.overlay {
-  visibility: hidden;
-}
-/* .overlay:hover {
-  visibility: hidden;
-} */
 
 .poster-container {
   width: 10rem;
@@ -106,7 +103,7 @@ a.imdb:hover + div.overlay {
 /***** FOOTER *****/
 body {
   position: relative;
-  height: 100%;
+  min-height: 100vh;
 }
 
 main {
@@ -114,8 +111,7 @@ main {
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  height: 2rem;
+  margin-top: auto;
+  margin-bottom: 1rem;
   text-align: center;
 }
