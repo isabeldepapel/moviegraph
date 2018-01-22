@@ -7,17 +7,6 @@ from .images import get_actor_image, get_movie_image
 from .models import Name, Graph
 from django.db.models import Q
 
-# import string
-
-testing = False
-testing = True  # to test deploy
-if testing:
-    GRAPH = {}
-else:
-    GRAPH = read_graph_from_csv()
-# testing deploy
-# GRAPH = {}
-
 
 # helper function
 def capitalize(text):
@@ -131,16 +120,10 @@ def get_info(path):
     return path_with_images
 
 
-# Create your views here.
 def index(request):
     """View function for main/home page."""
-    global GRAPH
-    # generate graph of actors and movies
-    # graph = read_graph_from_csv()
 
     return render(request, 'scores/index.html')
-
-    # return HttpResponse("Hello, world. Scores index page.")
 
 
 def validate(request):
@@ -183,7 +166,8 @@ def validate(request):
 
 def search(request):
     print(request.GET)
-    search_for = capitalize(request.GET.get('search-for', default=''))
+    # search_for = capitalize(request.GET.get('search-for', default=''))
+    search_for = request.GET.get('search-for', default='')
     print(search_for)
 
     context = {}
@@ -195,8 +179,8 @@ def search(request):
          Q(professions__icontains='actress'))
     )
 
-    print(results[0])
-    print(results[0].id)
+    print(results)
+
     # if not a valid name
     if results.count() == 0:
         context['error_message'] = 'Not a valid name: ' + search_for
@@ -222,110 +206,72 @@ def search(request):
     return render(request, 'scores/index.html', context)
 
 
-def submit(request):
-    print(request)
-    print(request.GET)
-    print(request.GET.get('search-for', default='test'))
-    search_for = capitalize(request.GET.get('search-for', default=''))
-    # search_for = capitalize(request.GET['search-for'])
-    print(search_for)
-    global GRAPH
-    # filter for name in actors/actresses
-    match = Name.objects.filter(
-        Q(primary_name=search_for) &
-        Q(birth_year__isnull=False) &
-        (Q(professions__icontains='actor') |
-         Q(professions__icontains='actress'))
-    )
-
-    context = {}
-    # check if no results
-    if match.count() == 0 or match[0].id not in GRAPH:
-        context['error_message'] = 'Not a valid name: ' + search_for
-        return render(request, 'scores/index.html', context)
-    else:
-        actor = match[0]
-        # graph = read_graph_from_csv()
-        print(GRAPH[actor.id])
-        path = search_graph(GRAPH, actor.id)
-        print(path)
-        print(len(path))
-
-        path_with_images = get_images(path)
-        context['path'] = path_with_images
-        # context['search_for'] = actor
-
-        context['path_end'] = (
-            actor,
-            get_actor_image(actor.primary_name)
-        )
-
-        return render(request, 'scores/index.html', context)
-
-
 # def submit(request):
-#     search_for = request.GET.get('searchFor', default='')
+#     print(request.GET)
+#     print(request.GET.get('search-for', default='test'))
+#     search_for = capitalize(request.GET.get('search-for', default=''))
+#     # search_for = capitalize(request.GET['search-for'])
 #     print(search_for)
-#     global GRAPH
+#
 #     # filter for name in actors/actresses
-#     # match = Name.objects.filter(
-#     #     Q(primary_name=search_for) &
-#     #     Q(birth_year__isnull=False) &
-#     #     (Q(professions__icontains='actor') |
-#     #      Q(professions__icontains='actress'))
-#     # )
-#     #
-#     # context = {}
-#     data = {}
-#
-#     # check if no results
-#     # if match.count() == 0 or match[0].id not in GRAPH:
-#     #     data['error_message'] = 'Not a valid name: ' + search_for
-#     #     return render(request, 'scores/index.html', context)
-#     # else:
-#     actor = Name.objects.get(id=search_for)
-#     # graph = read_graph_from_csv()
-#     # print(GRAPH[actor.id])
-#     path = search_graph(GRAPH, actor.id)
-#     print(path)
-#     print(len(path))
-#
-#     path_with_images = get_info(path)
-#     print(path_with_images)
-#     data['path'] = path_with_images
-#     # context['search_for'] = actor
-#
-#     data['path_end'] = (
-#         actor.id,
-#         actor.primary_name,
-#         get_actor_image(actor.primary_name)
+#     match = Name.objects.filter(
+#         Q(primary_name=search_for) &
+#         Q(birth_year__isnull=False) &
+#         (Q(professions__icontains='actor') |
+#          Q(professions__icontains='actress'))
 #     )
 #
-#     # return render(request, 'scores/index.html', context)
-#     jr = JsonResponse(data)
-#     print(jr)
-#     return jr
+#     context = {}
+#     # check if no results
+#     if match.count() == 0 or match[0].id not in GRAPH:
+#         context['error_message'] = 'Not a valid name: ' + search_for
+#         return render(request, 'scores/index.html', context)
+#     else:
+#         actor = match[0]
+#         # graph = read_graph_from_csv()
+#         print(GRAPH[actor.id])
+#         path = search_graph(GRAPH, actor.id)
+#         print(path)
+#         print(len(path))
+#
+#         path_with_images = get_images(path)
+#         context['path'] = path_with_images
+#         # context['search_for'] = actor
+#
+#         context['path_end'] = (
+#             actor,
+#             get_actor_image(actor.primary_name)
+#         )
+#
+#         return render(request, 'scores/index.html', context)
 
-    # return HttpResponse('This is a stub: ' + end_name)
 
 def actors(request):
-    search_for = capitalize(request.GET.get('name', default=''))
+    # search_for = capitalize(request.GET.get('name', default=''))
+    search_for = request.GET.get('name', default='')
+
     print(search_for)
-    # if search_for == '' or len(search_for) < 3:
-    #     return {}
 
     actor_list = []
     actors = Name.objects.filter(
-        Q(primary_name__startswith=search_for) &
+        Q(primary_name__istartswith=search_for) &
         Q(birth_year__isnull=False) &
         (Q(professions__icontains='actor') |
          Q(professions__icontains='actress'))
     )[:20]
 
+    # keep track of count to see whether to keep
+    # making calls to /actors in app.js
+    complete = False
+    count = 0
     for actor in actors:
         actor_list.append({
             'actor_id': actor.id,
             'actor_name': actor.primary_name
         })
+        count += 1
 
-    return JsonResponse({'actors': actor_list})
+    if count < 20:
+        complete = True
+
+    return JsonResponse({'actors': actor_list, 'complete': complete})

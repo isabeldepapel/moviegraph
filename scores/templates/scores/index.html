@@ -4,9 +4,11 @@
 {% block content %}
 
 {% if error_message %}
-  <p class="error">
-    {{ error_message }}
-  </p>
+  <section class="error grid-x small-12 cell">
+    <p class="error">
+      {{ error_message }}
+    </p>
+  </section>
 {% endif %}
 
 <form class="grid-x small-12 cell" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
@@ -19,47 +21,6 @@
 </form>
 
 <section class="path grid-x small-12 cell align-center">
-  <!-- <h3 class="small-12 cell score"></h3>
-  <ul class="actors grid-x small-12 cell align-center">
-  </ul> -->
-
-  <!-- <ul class="actors grid-x small-12 cell align-center">
-    <li class="grid-x small-12 cell align-center">
-      <div class="image-container photo">
-        <a href="http://imdb.com/name/nm0000102" target="_blank" class="imdb">
-          <img src="https://image.tmdb.org/t/p/w185/rjX2Oz3tCZMfSwOoIAyEhdtXnTE.jpg" alt="photo of Kevin Bacon" class="images profile-photos"/>
-          <div class="overlay grid-x align-middle">
-            <span class="overlay-text small-12 cell"><p>Kevin Bacon</p></span>
-          </div>
-        </a>
-      </div>
-    </li>
-    <p class="connector">
-      was in
-    </p>
-    <ul class="movies grid-x small-12 cell align-center">
-      <li class="grid-x small-3 cell align-center">
-        <div class="image-container poster">
-          <a href="http://www.imdb.com/title/tt1276104" target="_blank" class="imdb">
-            <img src="https://image.tmdb.org/t/p/w185/o4qXZMrZlfuTfwwNGMyTcx6p2uO.jpg" alt="poster of Looper" class="images posters" />
-            <div class="overlay grid-x align-middle">
-              <span class="overlay-text small-12 cell"><p>Looper, 2015</p></span>
-            </div>
-          </a>
-        </div>
-      </li>
-      <li class="grid-x small-3 cell align-center">
-        <div class="image-container poster">
-          <a href="http://www.imdb.com/title/tt1276104" target="_blank" class="imdb">
-            <img src="https://image.tmdb.org/t/p/w185/6u1fYtxG5eqjhtCPDx04pJphQRW.jpg" alt="poster of Looper" class="images posters" />
-            <div class="overlay grid-x align-middle">
-              <span class="overlay-text small-12 cell"><p>The Empire Strikes Back, 1980</p></span>
-            </div>
-          </a>
-        </div>
-      </li>
-    </ul>
-  </ul> -->
 {% if path %}
   <h3 class="small-12 cell score">
     Bacon Score: {{ path|length }}
