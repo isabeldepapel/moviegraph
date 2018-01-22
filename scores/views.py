@@ -10,7 +10,7 @@ from django.db.models import Q
 # import string
 
 testing = False
-# testing = True  # to test deploy
+testing = True  # to test deploy
 if testing:
     GRAPH = {}
 else:
@@ -266,3 +266,25 @@ def submit(request):
 #     return jr
 
     # return HttpResponse('This is a stub: ' + end_name)
+
+def actors(request):
+    search_for = capitalize(request.GET.get('name', default=''))
+    print(search_for)
+    # if search_for == '' or len(search_for) < 3:
+    #     return {}
+
+    actor_list = []
+    actors = Name.objects.filter(
+        Q(primary_name__startswith=search_for) &
+        Q(birth_year__isnull=False) &
+        (Q(professions__icontains='actor') |
+         Q(professions__icontains='actress'))
+    )[:20]
+
+    for actor in actors:
+        actor_list.append({
+            'actor_id': actor.id,
+            'actor_name': actor.primary_name
+        })
+
+    return JsonResponse({'actors': actor_list})
