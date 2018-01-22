@@ -13,14 +13,15 @@
 
   <input type="search" name="start_from" value="Kevin Bacon" disabled />
   <label for="search-for">Name</label>
-  <input type="search" name="search-for" id="search-for" placeholder="Name"/>
+  <input type="search" name="search-for" id="search-for" list="actor-list" placeholder="Name"/>
+  <datalist id="actor-list"></datalist>
   <button type="submit" class="button small-6 medium-3 large-2 cell" id="search-graph">Search</button>
 </form>
 
 <section class="path grid-x small-12 cell align-center">
-  <h3 class="small-12 cell score"></h3>
+  <!-- <h3 class="small-12 cell score"></h3>
   <ul class="actors grid-x small-12 cell align-center">
-  </ul>
+  </ul> -->
 
   <!-- <ul class="actors grid-x small-12 cell align-center">
     <li class="grid-x small-12 cell align-center">

@@ -130,6 +130,47 @@ const checkName = function checkName(event) {
   });
 };
 
+const fileUrl = 'https://s3-us-west-2.amazonaws.com/moviegraph-static/data/actors.json';
+
+const getActorList = function getActorList() {
+  console.log('running')
+  $.get(fileUrl, (response) => {
+    console.log(response);
+
+    const actors = response.actors;
+    const numActors = actors.length;
+    const dataList = $('actor-list');
+
+    for (let i = 0; i < numActors; i += 1) {
+      const opt = `<option data-id="${actors[i].actor_id}" value="${actors[i].actor_name}">`;
+      dataList.append(opt);
+    }
+  });
+};
+
+const getActors = function getActors(event) {
+  const text = $(event.currentTarget).val();
+  const dataList = $('#actor-list');
+
+  // clear current data list
+  dataList.empty();
+
+  // exit if input is blank or short len
+  if (text === '' || text.length < 3) return;
+
+  $.get('/actors', { name: text }, (response) => {
+    const actors = response.actors;
+
+    for (let i = 0, len = actors.length; i < len; i += 1) {
+      const opt = `
+        <option data-id="${actors[i].actor_id}" value="${actors[i].actor_name}"></option>
+      `;
+
+      dataList.append(opt);
+    }
+  });
+};
+
 $(document).ready(() => {
   // $(document).foundation();
 
@@ -138,4 +179,5 @@ $(document).ready(() => {
   $('.path').on('mouseenter', '.image-container', hideOverlay);
   $('.path').on('mouseleave', '.image-container', showOverlay);
 
+  $('#search-for').on('input', getActors);
 });
