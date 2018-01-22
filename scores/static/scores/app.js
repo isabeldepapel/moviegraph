@@ -1,4 +1,5 @@
 const form = $('#search-graph-form');
+let complete = false; // used to track whether datalist is complete or not
 
 const hideOverlay = function hideOverlay(event) {
   const overlay = $(event.currentTarget).find('.overlay');
@@ -130,35 +131,24 @@ const checkName = function checkName(event) {
   });
 };
 
-const fileUrl = 'https://s3-us-west-2.amazonaws.com/moviegraph-static/data/actors.json';
-
-const getActorList = function getActorList() {
-  console.log('running')
-  $.get(fileUrl, (response) => {
-    console.log(response);
-
-    const actors = response.actors;
-    const numActors = actors.length;
-    const dataList = $('actor-list');
-
-    for (let i = 0; i < numActors; i += 1) {
-      const opt = `<option data-id="${actors[i].actor_id}" value="${actors[i].actor_name}">`;
-      dataList.append(opt);
-    }
-  });
-};
 
 const getActors = function getActors(event) {
   const text = $(event.currentTarget).val();
   const dataList = $('#actor-list');
 
-  // clear current data list
-  dataList.empty();
-
   // exit if input is blank or short len
-  if (text === '' || text.length < 3) return;
+  if (text === '' || text.length < 4) {
+    dataList.empty();
+    return;
+  }
 
   $.get('/actors', { name: text }, (response) => {
+    // exit if complete filtered list has been returned
+    // and if datalist already populated
+    if (response.complete && complete) return;
+
+    dataList.empty();
+
     const actors = response.actors;
 
     for (let i = 0, len = actors.length; i < len; i += 1) {
@@ -168,13 +158,29 @@ const getActors = function getActors(event) {
 
       dataList.append(opt);
     }
+    if (response.complete) complete = true;
+    complete = false;
   });
 };
 
-$(document).ready(() => {
-  // $(document).foundation();
+const setSearchVal = function setSearchVal() {
+  const urlParams = new URLSearchParams(document.location);
+  const searchText = urlParams.get('search');
 
+  // if no search params
+  if (!searchText || searchText === '') return;
+
+  // extract param (index of '=' + 1)
+  let searchParam = searchText.substring(searchText.indexOf('=') + 1);
+  // replace '+' with ' '
+  searchParam = searchParam.replace('+', ' ');
+  $('#search-for').val(searchParam);
+};
+
+$(document).ready(() => {
   // form.on('click', 'button', checkName);
+  $('#search-for').focus();
+  setSearchVal();
 
   $('.path').on('mouseenter', '.image-container', hideOverlay);
   $('.path').on('mouseleave', '.image-container', showOverlay);
