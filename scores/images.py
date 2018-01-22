@@ -51,6 +51,10 @@ def get_actor_image(name):
     search = tmdb.Search()
     search.person(query=name)
 
+    # if no results
+    if not search.results:
+        return None
+
     # get profile image for first result
     file_path = search.results[0]['profile_path']
 
@@ -71,6 +75,10 @@ def get_movie_image(title):
     """
     search = tmdb.Search()
     search.movie(query=title)
+
+    # if no results
+    if not search.results:
+        return None
 
     # get poster image for first result
     file_path = search.results[0]['poster_path']

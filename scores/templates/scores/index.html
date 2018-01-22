@@ -9,7 +9,7 @@
   </p>
 {% endif %}
 
-<form class="grid-x small-12 cell" action="{% url 'scores:submit' %}" method="get" id="search-graph-form">
+<form class="grid-x small-12 cell" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
 
   <input type="search" name="start_from" value="Kevin Bacon" disabled />
   <label for="search-for">Name</label>
@@ -88,7 +88,11 @@
       <li class="grid-x small-3 cell align-center">
         <div class="image-container poster">
           <a href="http://www.imdb.com/title/{{ movie.0.id }}" target="_blank">
-            <img src="{{ movie.1 }}" alt="poster for {{ movie.0.primary_title }}" class="images posters" />
+            {% if movie.1 %}
+              <img src="{{ movie.1 }}" alt="poster for {{ movie.0.primary_title }}" class="images posters" />
+            {% else %}
+              <img src="{% static 'scores/images/no_image_avail.png' %}" alt="no image available" class="images posters" />
+            {% endif %}
             <div class="overlay grid-x align-middle">
               <span class="overlay-text small-12 cell"><p>{{ movie.0.primary_title }}, {{ movie.0.start_year }}</p></span>
             </div>
@@ -104,7 +108,11 @@
     <li class="grid-x small-12 cell align-center">
       <div class="image-container photo">
         <a href="http://www.imdb.com/name/{{ path_end.0.id }}" target="_blank">
-          <img src="{{ path_end.1 }}" alt="photo of {{ path_end.0.primary_name }}" class="images profile-photos"/>
+          {% if path_end.1 %}
+            <img src="{{ path_end.1 }}" alt="photo of {{ path_end.0.primary_name }}" class="images profile-photos"/>
+          {% else %}
+            <img src="{% static 'scores/images/profile.jpg' %}" alt="no photo available" class="images profile-photos" />
+          {% endif %}
           <div class="overlay grid-x align-middle">
             <span class="overlay-text small-12 cell"><p>{{ path_end.0.primary_name }}</p></span>
           </div>
