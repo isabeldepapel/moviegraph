@@ -14,16 +14,12 @@ import os
 import environ
 
 root = environ.Path(__file__) - 2  # go 2 directories up
-
 # set up casting and defaults
 env = environ.Env(
     SECRET_KEY=str,
     DEBUG=(bool, False),
     DATABASE_URL=str,
 )
-
-# update engine format in environ env
-# env.DB_SCHEMES['psql'] = 'django.db.backends.postgresql'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,7 +31,6 @@ env.read_env()
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# moved to dev settings (untracked)
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
