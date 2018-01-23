@@ -9,7 +9,12 @@ dev.py
 db.sqlite3
 
 # ignore imdb data files (huge)
-data/
+test/
+*.csv
+*.tsv
+
+# ignore db dump file
+*.dump
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
