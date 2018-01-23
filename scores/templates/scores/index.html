@@ -3,20 +3,26 @@
 
 {% block content %}
 
-{% if error_message %}
-  <section class="error grid-x small-12 cell">
-    <p class="error">
-      {{ error_message }}
-    </p>
-  </section>
-{% endif %}
 
 <form class="grid-x small-12 cell" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
 
-  <input type="search" name="start_from" value="Kevin Bacon" disabled />
-  <label for="search-for">Name</label>
-  <input type="search" name="search-for" id="search-for" list="actor-list" placeholder="Name"/>
-  <datalist id="actor-list"></datalist>
+{% if error.start_from %}
+  <p class="error start small-12 cell">
+    {{ error.start_from }}
+  </p>
+{% endif %}
+  <input type="search" name="start-from" value="{{ start_from|default:'Kevin Bacon' }}" id="start-from" list="actor-list1" required/>
+  <datalist id="actor-list1"></datalist>
+
+  <label for="search-for" class="small-4 cell">Name</label>
+  {% if error.search_for %}
+    <p class="error end small-8 cell">
+      {{ error.search_for }}
+    </p>
+  {% endif %}
+  <input type="search" name="search-for" id="search-for" list="actor-list2" placeholder="Name" value="{{ search_for }}" required/>
+  <datalist id="actor-list2"></datalist>
+
   <button type="submit" class="button small-6 medium-3 large-2 cell" id="search-graph">Search</button>
 </form>
 
@@ -83,6 +89,5 @@
   </ul>
 {% endif %}
 </section>
-
 
 {% endblock %}
