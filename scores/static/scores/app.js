@@ -131,10 +131,28 @@ const checkName = function checkName(event) {
   });
 };
 
+const validate = function validate(event) {
+  const name = $(event.currentTarget).val();
+  console.log(event.currentTarget);
+
+  const elem = $(event.currentTarget).attr('id');
+  debugger
+
+  $.get('/validate', { name }, (response) => {
+    console.log(response);
+    actor = response.actor
+    $.get('/search', { elem: actor.name }, (response) => {
+      console.log('success');
+    });
+  }).fail((response) => {
+
+  });
+};
 
 const getActors = function getActors(event) {
   const text = $(event.currentTarget).val();
-  const dataList = $('#actor-list');
+  // const dataList = $('#actor-list');
+  const dataList = $(event.currentTarget).next();
 
   // exit if input is blank or short len
   if (text === '' || text.length < 4) {
@@ -158,32 +176,39 @@ const getActors = function getActors(event) {
 
       dataList.append(opt);
     }
-    if (response.complete) complete = true;
-    complete = false;
+    if (response.complete) {
+      complete = true;
+    } else {
+      complete = false;
+    }
   });
 };
 
-const setSearchVal = function setSearchVal() {
-  const urlParams = new URLSearchParams(document.location);
-  const searchText = urlParams.get('search');
-
-  // if no search params
-  if (!searchText || searchText === '') return;
-
-  // extract param (index of '=' + 1)
-  let searchParam = searchText.substring(searchText.indexOf('=') + 1);
-  // replace '+' with ' '
-  searchParam = searchParam.replace('+', ' ');
-  $('#search-for').val(searchParam);
-};
+// const setSearchVal = function setSearchVal() {
+//   const urlParams = new URLSearchParams(document.location);
+//   const searchText = urlParams.get('search');
+//
+//   // if no search params
+//   if (!searchText || searchText === '') return;
+//
+//   // extract param (index of '=' + 1)
+//   let searchParam = searchText.substring(searchText.indexOf('=') + 1);
+//   // replace '+' with ' '
+//   searchParam = searchParam.replace('+', ' ');
+//   $('#search-for').val(searchParam);
+// };
 
 $(document).ready(() => {
   // form.on('click', 'button', checkName);
   $('#search-for').focus();
-  setSearchVal();
+  // setSearchVal();
 
   $('.path').on('mouseenter', '.image-container', hideOverlay);
   $('.path').on('mouseleave', '.image-container', showOverlay);
 
   $('#search-for').on('input', getActors);
+  $('#start-from').on('input', getActors);
+
+  // $('#start-from').on('focusout', validate);
+  // $('#search-for').on('focusout', validate);
 });
