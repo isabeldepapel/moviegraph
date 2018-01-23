@@ -37,6 +37,7 @@ class Name(models.Model):
     death_year = models.PositiveSmallIntegerField(null=True)
     professions = models.TextField(null=True)
     known_for = models.TextField(null=True)
+    in_graph = models.BooleanField(default=False)
 
     def __str__(self):
         return self.primary_name
