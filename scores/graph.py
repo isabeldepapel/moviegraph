@@ -19,7 +19,6 @@ KEVIN_BACON = Name.objects.filter(
 KEVIN_BACON_ID = 'nm0000102'
 
 DIR_PATH = environ.Path(__file__) - 1
-# FILE_PATH = str(DIR_PATH.path('data/graph_info.csv'))
 FILE_PATH = str(DIR_PATH.path('data/graph.csv'))
 
 
@@ -40,23 +39,21 @@ def generate_graph():
 
     graph = {}
     # iterate through movies, find actors for each and create nodes
-    # for movie_id in movies.iterator():
     for movie in movies.iterator():
         movie_id = movie['id']
-        # print(movie_id)
-        # print(movie)
-        actors = Principal.objects.filter(title_id=movie_id).values('name_id')
-        # print(actors)
-        # costars = set(actors)
+
+        actors = Principal.objects.filter(
+            Q(title_id=movie_id) &
+            (Q(name__professions__icontains='actor') |
+             Q(name__professions__icontains='actress'))
+        ).values('name_id')
+
         costars = set([actor['name_id'] for actor in actors])
-        # print(costars)
 
         for actor in actors:
             # remove current actor from costars
             actor_id = actor['name_id']
             costars.remove(actor_id)
-            # print(actor_id)
-            # print(costars)
 
             # if no costars, go to next iteration
             if len(costars) < 1:
@@ -88,31 +85,12 @@ def generate_graph():
     return graph
 
 
-# def write_graph_to_csv(graph):
-#     """Write graph info to a csv to read from later."""
-#     start = time.time()
-#
-#     with open(FILE_PATH, 'w', newline='') as csvfile:
-#         writer = csv.writer(csvfile, delimiter='\t')
-#         for actor_id, neighbors in graph.items():
-#             row = [actor_id]
-#
-#             for neighbor_id, movies in neighbors.items():
-#                 s = ''
-#                 s += neighbor_id + ','
-#                 s += ','.join(movie for movie in movies)
-#                 row.append(s)
-#
-#             writer.writerow(row)
-#
-#     print(time.time() - start)
-#     print('it took {0:0.1f} seconds'.format(time.time() - start))
-def write_graph_to_csv(graph):
+def write_graph_to_csv(graph, file_path=FILE_PATH):
     """Write graph info to a csv to read from later."""
     start = time.time()
     count = 1  # set up pk
 
-    with open(FILE_PATH, 'w', newline='') as csvfile:
+    with open(file_path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t')
         for actor_id, neighbors in graph.items():
 
