@@ -5,19 +5,78 @@ const hideOverlay = function hideOverlay(event) {
   const overlay = $(event.currentTarget).find('.overlay');
   overlay.hide();
 };
+
 const showOverlay = function showOverlay(event) {
   const overlay = $(event.currentTarget).find('.overlay');
   overlay.show();
 };
 
-const searchGraph = function searchGraph(findActorId) {
-  const searchUrl = '/submit';
-  const data = {
-    searchFor: findActorId,
-  };
+// validate actor names are in graph
+const isValid = function isValid() {
+  let valid = true;
+  const startFrom = $('#start-from').val();
+  const searchFor = $('#search-for').val();
 
-  $.get(searchUrl, data, (response) => {
+  if (!startFrom || startFrom.trim() === '') {
+    valid = false;
+    $('p.start-from').text('Can\'t be blank');
+    $('#start-from').addClass('error');
+  }
+  if (!searchFor || searchFor.trim() === '') {
+    valid = false;
+    $('p.search-for').text('Can\'t be blank');
+    $('#search-for').addClass('error');
+  }
+  if (startFrom.toLowerCase() === searchFor.toLowerCase()) {
+    valid = false;
+    $('p.both').text('Names must be different');
+    $('#start-from').addClass('error');
+  }
+
+  return valid;
+};
+
+const eraseErrors = function eraseErrors() {
+  $('p.error').empty();
+  $('#start-from, #search-for').removeClass('error');
+};
+
+const erasePath = function erasePath() {
+  $('.score').empty();
+  $('ul.actors').empty();
+};
+
+const init = () => {
+  $('body').removeClass('init grid-x align-middle');
+  $('body').addClass('grid-y');
+  $('header').show();
+  $('footer').addClass('grid-x');
+  $('footer').show();
+
+  // form styling
+  form.removeClass('small-8');
+  form.addClass('small-12');
+  $('.input-wrapper').addClass('large-5');
+  $('.button-wrapper').addClass('large-2');
+};
+
+const searchGraph = function searchGraph(data) {
+  // event.preventDefault();
+  // resetDisplay();
+
+  // const url = form.attr('action');
+  // const formData = form.serialize();
+  if ($('body').hasClass('init')) init();
+
+  erasePath();
+  // const searchUrl = '/search_json';
+  console.log(data['search-for']);
+  console.log(data['start-from']);
+
+  $.get('/search', data, (response) => {
+    console.log(response);
     const path = response.path
+    console.log(response.path);
     const endPath = response.path_end
     const lenPath = path.length;
 
@@ -110,24 +169,26 @@ const searchGraph = function searchGraph(findActorId) {
   });
 };
 
-const resetDisplay = function resetDisplay() {
-  $('.score').empty();
-  $('ul.actors').empty();
-  $('.error').empty();
-};
-
-const checkName = function checkName(event) {
+const getPath = function getPath(event) {
   event.preventDefault();
-  resetDisplay();
+  eraseErrors();
 
-  const url = form.attr('action');
+  if (!isValid()) return;
+
   const formData = form.serialize();
 
-  $.get(url, formData, (response) => {
-    searchGraph(response.actor_id);
-  }).fail(() => {
-    const html = '<p class="error">Not a valid name.</p>';
-    $('.error').append(html);
+  $.get('/validate', formData, (response) => {
+    console.log(response);
+    // searchGraph(formData);
+    searchGraph(response);
+  }).fail((response) => {
+    const errors = response.responseJSON.errors;
+
+    Object.keys(errors).forEach((field) => {
+      const error = errors[field];
+      form.find(`p.${field}`).text(error);
+      $(`#${field}`).addClass('error');
+    });
   });
 };
 
@@ -166,31 +227,16 @@ const getActors = function getActors(event) {
   });
 };
 
-// const setSearchVal = function setSearchVal() {
-//   const urlParams = new URLSearchParams(document.location);
-//   const searchText = urlParams.get('search');
-//
-//   // if no search params
-//   if (!searchText || searchText === '') return;
-//
-//   // extract param (index of '=' + 1)
-//   let searchParam = searchText.substring(searchText.indexOf('=') + 1);
-//   // replace '+' with ' '
-//   searchParam = searchParam.replace('+', ' ');
-//   $('#search-for').val(searchParam);
-// };
-
 // highlight input box if there's an error
 const highlightErrors = function highlightErrors() {
   const error = $('.error');
-  console.log(error);
   if (error && error.text() !== '') {
     error.next().addClass('error');
   }
 };
 
 $(document).ready(() => {
-  // form.on('click', 'button', checkName);
+  form.on('click', 'button', getPath);
   $('#search-for').focus();
   // setSearchVal();
 
@@ -200,7 +246,7 @@ $(document).ready(() => {
   $('#search-for').on('input', getActors);
   $('#start-from').on('input', getActors);
 
-  highlightErrors();
+  // highlightErrors();
   // $('#start-from').on('focusout', validate);
   // $('#search-for').on('focusout', validate);
 });

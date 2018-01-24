@@ -2,6 +2,7 @@
 header {
   background-color: #183059;
   max-height: 6rem;
+  padding-left: 2rem;
 }
 
 h1 {
@@ -159,45 +160,47 @@ p.error {
 }
 
 input.error {
-  border-color: red;
+  border: 2px solid red;
+  /* border-color: red; */
 }
 
 /**** HOME PAGE ****/
-div.home {
+body.init {
   background: linear-gradient(
-       rgba(0, 0, 0, 0.4),
-       rgba(0, 0, 0, 0.4)
-     ), url('./images/hackers.jpg');
+       rgba(0, 0, 0, 0.7),
+       rgba(0, 0, 0, 0.7)
+     ), url('./images/footloose_dance.jpg');
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
-  height: 100vh;
+  height: 100%;
   width: 100vw;
 }
 
-form.home button#search-graph {
+.init button#search-graph {
   /* border: #EB5E28 1.25px solid; */
-  border: 1.5px solid white;
+  border: 1.5px solid #EB5E28;
   border-radius: 5px;
-  /* color: #EB5E28; */
-  color: white;
+  color: #EB5E28;
+  /* color: white; */
   background-color: transparent;
   font-size: 1.4rem;
   font-weight: bold;
   height: 3.8rem;
 }
 
-form.home button#search-graph:hover, form.home button#search-graph:focus {
-  background-color: rgba(255, 255, 255, 0.3);
+.init button#search-graph:hover, .init button#search-graph:focus {
+  /* background-color: rgba(255, 255, 255, 0.3); */
+  background-color: #EB5E28;
+  color: white;
 }
 
 .init #search-graph-form input {
-  /* border-radius: 2px; */
+  border-radius: 5px;
   height: 3.8rem;
   font-size: 1.25rem;
-  /* margin-bottom: 0; */
 }
 
-.form-wrapper {
+/* .form-wrapper {
   height: 100vh;
-}
+} */
