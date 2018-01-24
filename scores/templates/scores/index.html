@@ -1,138 +1,81 @@
-{% extends 'scores/base.html' %}
+<!DOCTYPE html>
 {% load static %}
 
-{% block content %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MovieGraph</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css" integrity="sha256-GSio8qamaXapM8Fq9JYdGNTvk/dgs+cMLgPeevOYEx0=" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css?family=Jura|Orbitron" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}" />
+  </head>
 
-<header class="small-12 cell">
-  <a href="{% url 'scores:home' %}"><h1>Movie + Graph</h1></a>
-</header>
-<main class="small-12 cell grid-x">
+  <body class="init grid-x grid-padding-x align-middle">
 
-<form class="grid-x grid-margin-x small-12 cell align-top" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
+    <header class="small-12 cell" hidden=true>
+      <a href="{% url 'scores:root' %}"><h1>Movie + Graph</h1></a>
+    </header>
+    <main class="small-12 cell grid-x align-center">
 
-  <div class="grid-y small-12 large-5 cell">
-    <input type="search" name="start-from" value="{{ start_from|default:'Kevin Bacon' }}" id="start-from" list="actor-list1" class="small-12 cell" required/>
-    <datalist id="actor-list1"></datalist>
-    <span class="error small-12 cell">
-    {% if error.start_fom %}
-      <p class="error start-from">
-        {{ error.start_from }}
-      </p>
-    {% elif error.both %}
-      <p class="error both">
-        {{ error.both }}
-      </p>
-    {% endif %}
-    </span>
-  </div>
-
-  <div class="grid-y small-12 large-5 cell">
-    <input type="search" name="search-for" id="search-for" list="actor-list2" placeholder="Name" value="{{ search_for }}" class="small-12 cell" required/>
-    <datalist id="actor-list2"></datalist>
-    <span class="error small-12 cell">
-    {% if error.search_for %}
-      <p class="error">
-        {{ error.search_for }}
-      </p>
-    {% endif %}
-    </span>
-  </div>
-
-  <div class="grid-y small-12 large-2 cell">
-    <button type="submit" class="button small-12 cell" id="search-graph">Search</button>
-  </div>
-
-</form>
-
-<section class="path grid-x small-12 cell align-center">
-{% if path %}
-  <h3 class="small-12 cell score">
-    Bacon Score: {{ path|length }}
-  </h3>
-  <ul class="actors grid-x small-12 cell align-center">
-  {% for step in path %}
-    <li class="grid-x small-12 cell align-center">
-      <div class="image-container photo">
-        <a href="http://www.imdb.com/name/{{ step.actor.0.id }}" target="_blank">
-          {% if step.actor.1 %}
-            <img src="{{ step.actor.1 }}" alt="photo of {{ step.actor.0.primary_name }}" class="images profile-photos" />
-          {% else %}
-            <img src="{% static 'scores/images/profile.jpg' %}" alt="no photo available" class="images profile-photos" />
-          {% endif %}
-          <div class="overlay grid-x align-middle">
-            <span class="overlay-text small-12 cell"><p>{{ step.actor.0.primary_name }}</p></span>
-          </div>
-        </a>
-      </div>
-    </li>
-    <p class="connector">
-      was in
-    </p>
-    <ul class="movies grid-x small-12 cell align-center">
-    {% for movie in step.movies %}
-      <li class="grid-x small-3 cell align-center">
-        <div class="image-container poster">
-          <a href="http://www.imdb.com/title/{{ movie.0.id }}" target="_blank">
-            {% if movie.1 %}
-              <img src="{{ movie.1 }}" alt="poster for {{ movie.0.primary_title }}" class="images posters" />
-            {% else %}
-              <img src="{% static 'scores/images/no_image_avail.png' %}" alt="no image available" class="images posters" />
-            {% endif %}
-            <div class="overlay grid-x align-middle">
-              <span class="overlay-text small-12 cell"><p>{{ movie.0.primary_title }}, {{ movie.0.start_year }}</p></span>
-            </div>
-          </a>
+      <form class="grid-x grid-margin-x small-8 cell" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
+        <div class="grid-y small-12 cell input-wrapper">
+          <input type="search" name="start-from" value="{{ start_from|default:'Kevin Bacon' }}" id="start-from" list="actor-list1" class="small-12 cell" required/>
+          <datalist id="actor-list1"></datalist>
+          <span class="error both small-12 cell">
+            <p class="error start-from"></p>
+            <p class="error both"></p>
+          </span>
         </div>
-      </li>
-    {% endfor %}
-    </ul>
-    <p class="connector">
-      with
-    </p>
-  {% endfor %}
-    <li class="grid-x small-12 cell align-center">
-      <div class="image-container photo">
-        <a href="http://www.imdb.com/name/{{ path_end.0.id }}" target="_blank">
-          {% if path_end.1 %}
-            <img src="{{ path_end.1 }}" alt="photo of {{ path_end.0.primary_name }}" class="images profile-photos"/>
-          {% else %}
-            <img src="{% static 'scores/images/profile.jpg' %}" alt="no photo available" class="images profile-photos" />
-          {% endif %}
-          <div class="overlay grid-x align-middle">
-            <span class="overlay-text small-12 cell"><p>{{ path_end.0.primary_name }}</p></span>
+
+        <div class="grid-y small-12 cell input-wrapper">
+          <input type="search" name="search-for" id="search-for" list="actor-list2" placeholder="Name" value="{{ search_for }}" class="small-12 cell" required/>
+          <datalist id="actor-list2"></datalist>
+          <span class="error small-12 cell">
+            <p class="error search-for"></p>
+          </span>
+        </div>
+
+        <div class="grid-y small-12 cell button-wrapper">
+          <button type="submit" class="button small-12 cell home" id="search-graph">Search</button>
+        </div>
+      </form>
+
+      <section class="path grid-x small-12 cell align-center">
+        <h3 class="small-12 cell score">
+        </h3>
+        <ul class="actors grid-x small-12 cell align-center"></ul>
+      </section>
+    </main>
+
+      <footer class="small-12 cell align-justify align-middle" hidden=true>
+        <section class="imdb-attribution grid-x small-4 cell align-bottom">
+          <span class="imdb-attribution">
+            <p>Data and links from</p>
+          </span>
+            <div class="logo-container grid-x small-2 cell">
+              <a href="http://www.imdb.com/" target="_blank">
+                <img src="{% static 'scores/images/imdb_logo.png' %}" alt="IMDb logo" />
+              </a>
+            </div>
+        </section>
+
+        <small class="small-4 cell">&copy; <a href="https://github.com/IsabelDePapel" target="_blank">Isabel Suchanek, 2018</a></small>
+
+        <section class="tmdb-attribution grid-x small-4 cell align-middle align-right">
+          <span class="tmdb-attribution">
+            <p>Images courtesy of</p>
+          </span>
+          <div class="logo-container grid-x small-2 cell">
+            <a href="https://www.themoviedb.org" target="_blank">
+              <img src="{% static 'scores/images/tmdb_logo.png' %}" alt="TMDb logo" />
+            </a>
           </div>
-        </a>
-      </div>
-    </li>
-  </ul>
-{% endif %}
-</section>
+        </section>
+      </footer>
 
-</main>
-<footer class="small-12 cell grid-x align-justify align-middle">
-  <section class="imdb-attribution grid-x small-4 cell align-bottom">
-    <span class="imdb-attribution">
-      <p>Data and links from</p>
-    </span>
-      <div class="logo-container grid-x small-2 cell">
-        <a href="http://www.imdb.com/" target="_blank">
-          <img src="{% static 'scores/images/imdb_logo.png' %}" alt="IMDb logo" />
-        </a>
-      </div>
-  </section>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
-  <small class="small-4 cell">&copy; <a href="https://github.com/IsabelDePapel" target="_blank">Isabel Suchanek, 2018</a></small>
+    <script src="{% static 'scores/app.js' %}" type="text/javascript"></script>
 
-  <section class="tmdb-attribution grid-x small-4 cell align-middle align-right">
-    <span class="tmdb-attribution">
-      <p>Images courtesy of</p>
-    </span>
-    <div class="logo-container grid-x small-2 cell">
-      <a href="https://www.themoviedb.org" target="_blank">
-        <img src="{% static 'scores/images/tmdb_logo.png' %}" alt="TMDb logo" />
-      </a>
-    </div>
-  </section>
-</footer>
-
-{% endblock %}
+  </body>
+</html>

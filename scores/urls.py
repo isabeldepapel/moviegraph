@@ -5,11 +5,10 @@ from . import views
 app_name = 'scores'
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('home', views.home, name='home'),
+    path('', views.index, name='root'),
     path('index', views.index, name='index'),
-    # path('validate', views.validate, name='validate'),
-    # path('submit', views.submit, name='submit'),
+    path('validate', views.validate, name='validate'),
     path('actors', views.actors, name='actors'),
     path('search', views.search, name='search'),
+    # path('search_json', views.search_json, name='search_json')
 ]

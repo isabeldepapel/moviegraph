@@ -3,13 +3,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from .graph import search_graph2
+from .graph import search_graph2, KEVIN_BACON_ID
 from .images import get_actor_image, get_movie_image
 from .models import Name, Graph
 from django.db.models import Q
 
 
-# helper function
+# helper functions
 def capitalize(text):
     """
     Capitalize a given string.
@@ -67,6 +67,9 @@ def get_actor(name):
 
     Returns actor if found; else None.
     """
+    if name == 'Kevin Bacon':
+        return Name.objects.get(id=KEVIN_BACON_ID)
+
     results = Name.objects.filter(
         Q(primary_name=name) &
         Q(in_graph=True)
@@ -138,129 +141,123 @@ def get_info(path):
     return path_with_images
 
 
-def home(request):
-    return render(request, 'scores/home.html')
-
-
 def index(request):
     """View function for main/home page."""
     return render(request, 'scores/index.html')
 
 
-# def validate(request):
-#     """
-#     Validate actor name exists in database before searching.
+def validate(request):
+    """
+    Validate actor name exists in database before searching.
+
+    If more than one name fits the criteria, selects the first one
+    and returns the id.
+
+    Won't render.
+    """
+    search_for = request.GET.get('search-for', default='')
+    start_from = request.GET.get('start-from', default='')
+    print(request)
+    print(request.GET)
+
+    data = {}
+
+    search_for_actor = get_actor(search_for)
+    start_from_actor = get_actor(start_from)
+
+    if not search_for_actor:
+        data['errors'] = {'search-for': 'Not a valid name'}
+    if not start_from_actor:
+        data['errors'] = {'start-from': 'Not a valid name'}
+
+    if 'errors' in data:
+        data['status'] = 'false'
+        return JsonResponse(data, status=404)
+    else:
+        data = {
+            'search-for': search_for_actor.id,
+            'start-from': start_from_actor.id,
+        }
+        return JsonResponse(data)
+
+
+# def search(request):
+#     """Search graph table using BFS to find Bacon score."""
+#     print(request.GET)
+#     # search_for = capitalize(request.GET.get('search-for', default=''))
+#     actor1 = request.GET.get('search-for', default='')
+#     actor2 = request.GET.get('start-from', default='')
+#     print(actor1)
+#     print(actor2)
 #
-#     If more than one name fits the criteria, selects the first one
-#     and returns the id.
+#     # save to context for displaying in template
+#     context = {'search_for': actor1, 'start_from': actor2}
+#     context['error'] = {}
 #
-#     Won't render.
-#     """
-    # search_for = capitalize(request.GET.get('search-for', default=''))
-    # print(request)
-    # print(request.GET)
-    #
-    # actor_list = Name.objects.filter(
-    #     Q(primary_name=search_for) &
-    #     Q(birth_year__isnull=False) &
-    #     (Q(professions__icontains='actor') |
-    #      Q(professions__icontains='actress'))
-    # )
-    #
-    # print(search_for)
-    # data = {}
-    #
-    # # TODO check if name in graph (if cached)
-    # if actor_list.count() == 0 or actor_list[0].id not in GRAPH:
-    #     data['error_message'] = 'Not a valid name.'
-    #     data['status'] = 'false'
-    #     print(JsonResponse)
-    #     return JsonResponse(data, status=404)
-    #
-    # else:
-    #     # grab first one in list
-    #     actor = actor_list[0]
-    #     data['actor_id'] = actor.id
-    #     print(JsonResponse)
-    #     return JsonResponse(data)
+#     # make sure search and start are different
+#     if actor1.lower() == actor2.lower():
+#
+#         context['error']['both'] = 'Names need to be different'
+#         return render(request, 'scores/index.html', context)
+#
+#     # validate inputs
+#     if actor1 == 'Kevin Bacon':
+#         search_for = Name.objects.get(id=KEVIN_BACON_ID)
+#     else:
+#         search_for = get_actor(actor1)
+#     start_from = get_actor(actor2)
+#
+#     context['error'] = {}
+#     if not search_for:
+#         context['error']['search_for'] = 'Invalid input: ' + actor1
+#     if not start_from:
+#         context['error']['start_from'] = 'Invalid input: ' + actor2
+#     if context['error'] != {}:
+#         return render(request, 'scores/index.html', context)
+#
+#     path = search_graph2(search_for.id, start_from.id)
+#     print(path)
+#
+#     path_with_images = get_images(path)
+#     context['path'] = path_with_images
+#     # context['search_for'] = actor
+#
+#     context['path_end'] = (
+#         # actor,
+#         # get_actor_image(actor.primary_name)
+#         search_for,
+#         get_actor_image(search_for.primary_name)
+#     )
+#
+#     return render(request, 'scores/search.html', context)
 
 
 def search(request):
     """Search graph table using BFS to find Bacon score."""
-    print(request.GET)
     # search_for = capitalize(request.GET.get('search-for', default=''))
-    actor1 = request.GET.get('search-for', default='')
-    actor2 = request.GET.get('start-from', default='')
-    print(actor1)
-    print(actor2)
+    search_for = request.GET.get('search-for', default='')
+    start_from = request.GET.get('start-from', default='')
 
-    # save to context for displaying in template
-    context = {'search_for': actor1, 'start_from': actor2}
-    context['error'] = {}
+    print(search_for)
+    print(start_from)
 
-    # make sure search and start are different
-    if actor1.lower() == actor2.lower():
+    data = {}
 
-        context['error']['both'] = 'Names need to be different'
-        return render(request, 'scores/index.html', context)
-
-    # validate inputs
-    search_for = get_actor(actor1)
-    start_from = get_actor(actor2)
-
-    context['error'] = {}
-    if not search_for:
-        context['error']['search_for'] = 'Invalid input: ' + actor1
-    if not start_from:
-        context['error']['start_from'] = 'Invalid input: ' + actor2
-    if context['error'] != {}:
-        return render(request, 'scores/index.html', context)
-
-    # results = Name.objects.filter(
-    #     Q(primary_name=search_for) &
-    #     Q(birth_year__isnull=False) &
-    #     (Q(professions__icontains='actor') |
-    #      Q(professions__icontains='actress'))
-    # )
-    #
-    # print(results)
-    #
-    # # check input
-    # if results.count() == 0:
-    #     # check for capitalization and rerun query
-    #     results = Name.objects.filter(
-    #         Q(primary_name=capitalize(search_for)) &
-    #         Q(birth_year__isnull=False) &
-    #         (Q(professions__icontains='actor') |
-    #          Q(professions__icontains='actress'))
-    #     )
-    #     # if not a valid name
-    #     if results.count() == 0:
-    #         context['error'] = 'Not a valid name: ' + search_for
-    #         return render(request, 'scores/index.html', context)
-    #
-    # # if not in graph (e.g. tv actor)
-    # elif not Graph.objects.filter(star_id=results[0].id).exists():
-    #     context['error'] = 'No data available for ' + search_for
-    #     return render(request, 'scores/index.html', context)
-
-    # actor = results[0]
-    # path = search_graph2(actor.id)
-    path = search_graph2(search_for.id, start_from.id)
+    path = search_graph2(search_for, start_from)
     print(path)
 
-    path_with_images = get_images(path)
-    context['path'] = path_with_images
-    # context['search_for'] = actor
+    path_with_images = get_info(path)
+    data['path'] = path_with_images
 
-    context['path_end'] = (
-        # actor,
-        # get_actor_image(actor.primary_name)
+    name = Name.objects.get(id=search_for).primary_name
+    data['path_end'] = (
         search_for,
-        get_actor_image(search_for.primary_name)
+        name,
+        get_actor_image(name)
     )
 
-    return render(request, 'scores/index.html', context)
+    return JsonResponse(data)
+    # return render(request, 'scores/search.html', context)
 
 
 # def submit(request):
