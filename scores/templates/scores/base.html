@@ -19,8 +19,30 @@
       {% endblock %}
 
     </main>
-    <footer class="small-12 cell grid-x align-center">
-      <small>&copy; Isabel Suchanek, 2018</small>
+    <footer class="small-12 cell grid-x align-justify align-middle">
+      <section class="imdb-attribution grid-x small-4 cell align-bottom">
+        <span class="imdb-attribution">
+          <p>Data and links from</p>
+        </span>
+          <div class="logo-container grid-x small-2 cell">
+            <a href="http://www.imdb.com/" target="_blank">
+              <img src="{% static 'scores/images/imdb_logo.png' %}" alt="IMDb logo" />
+            </a>
+          </div>
+      </section>
+
+      <small class="small-4 cell">&copy; <a href="https://github.com/IsabelDePapel" target="_blank">Isabel Suchanek, 2018</a></small>
+
+      <section class="tmdb-attribution grid-x small-4 cell align-middle align-right">
+        <span class="tmdb-attribution">
+          <p>Images courtesy of</p>
+        </span>
+        <div class="logo-container grid-x small-2 cell">
+          <a href="https://www.themoviedb.org" target="_blank">
+            <img src="{% static 'scores/images/tmdb_logo.png' %}" alt="TMDb logo" />
+          </a>
+        </div>
+      </section>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
