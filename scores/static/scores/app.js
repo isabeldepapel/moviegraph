@@ -84,10 +84,12 @@ const searchGraph = function searchGraph(data) {
 
     let actorHtml;
     let movieHtml;
-    let endHtml;
+    // let endHtml;
 
-    const anonImage = 'static/scores/images/profile.jpg';
-    const anonAlt = 'no photo available';
+    const noPhotoSrc = 'static/scores/images/profile.jpg';
+    const noPhotoAlt = 'no photo available';
+    const noPosterSrc = 'static/scores/images/no_image_avail.png'
+    const noPosterAlt = 'no image available';
 
     let imageSrc;
     let imageAlt;
@@ -101,8 +103,8 @@ const searchGraph = function searchGraph(data) {
         imageSrc = actorUrl;
         imageAlt = `photo of ${actorName}`;
       } else {
-        imageSrc = anonImage;
-        imageAlt = anonAlt;
+        imageSrc = noPhotoSrc;
+        imageAlt = noPhotoAlt;
       }
 
       actorHtml = `
@@ -124,11 +126,19 @@ const searchGraph = function searchGraph(data) {
       for (let j = 0; j < numMovies; j += 1) {
         const [movieId, movieName, movieYear, movieUrl] = movies[j];
 
+        if (movieUrl) {
+          imageSrc = movieUrl;
+          imageAlt = `poster for ${movieName}`;
+        } else {
+          imageSrc = noPosterSrc;
+          imageAlt = noPosterAlt;
+        }
+
         movieHtml += `
           <li class="grid-x small-3 cell align-center">
             <div class="image-container poster">
               <a href="http://www.imdb.com/title/${movieId}" target="_blank">
-                <img src="${movieUrl}" alt="poster for ${movieName}" class="images posters"/>
+                <img src="${imageSrc}" alt="${imageAlt}" class="images posters"/>
                 <div class="overlay grid-x align-middle">
                   <span class="overlay-text small-12 cell"><p>${movieName}, ${movieYear}</p></span>
                 </div>
@@ -147,11 +157,11 @@ const searchGraph = function searchGraph(data) {
       imageSrc = endUrl;
       imageAlt = `photo of ${endName}`;
     } else {
-      imageSrc = anonImage;
-      imageAlt = anonAlt;
+      imageSrc = noPhotoSrc;
+      imageAlt = noPhotoAlt;
     }
 
-    endHtml = `
+    const endHtml = `
       <li class="grid-x small-12 cell align-center">
         <div class="image-container photo">
           <a href="http://www.imdb.com/name/${endId}" target="_blank">
