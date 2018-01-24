@@ -50,6 +50,7 @@ const init = () => {
   $('body').removeClass('init grid-x align-middle');
   $('body').addClass('grid-y');
   $('header').show();
+  $('.loader').show();
   $('footer').addClass('grid-x');
   $('footer').show();
 
@@ -69,14 +70,9 @@ const searchGraph = function searchGraph(data) {
   if ($('body').hasClass('init')) init();
 
   erasePath();
-  // const searchUrl = '/search_json';
-  console.log(data['search-for']);
-  console.log(data['start-from']);
 
   $.get('/search', data, (response) => {
-    console.log(response);
     const path = response.path
-    console.log(response.path);
     const endPath = response.path_end
     const lenPath = path.length;
 
@@ -188,8 +184,6 @@ const getPath = function getPath(event) {
   const formData = form.serialize();
 
   $.get('/validate', formData, (response) => {
-    console.log(response);
-    // searchGraph(formData);
     searchGraph(response);
   }).fail((response) => {
     const errors = response.responseJSON.errors;
@@ -237,26 +231,38 @@ const getActors = function getActors(event) {
   });
 };
 
-// highlight input box if there's an error
-const highlightErrors = function highlightErrors() {
-  const error = $('.error');
-  if (error && error.text() !== '') {
-    error.next().addClass('error');
+const config = {
+  attributes: false,
+  childList: true,
+  characterData: false,
+};
+
+const targetNode = document.querySelector('ul');
+
+const callback = function callback(mutationsList) {
+  for (let i = 0, len = mutationsList.length; i < len; i += 1) {
+    const mutation = mutationsList[i];
+    if (mutation.addedNodes.length > 0) {
+      $('.loader').hide();
+    } else {
+      $('.loader').show();
+    }
   }
 };
+
+const observer = new MutationObserver(callback);
+
 
 $(document).ready(() => {
   form.on('click', 'button', getPath);
   $('#search-for').focus();
-  // setSearchVal();
+
+  // toggle loader when waiting for path to load
+  observer.observe(targetNode, config);
 
   $('.path').on('mouseenter', '.image-container', hideOverlay);
   $('.path').on('mouseleave', '.image-container', showOverlay);
 
   $('#search-for').on('input', getActors);
   $('#start-from').on('input', getActors);
-
-  // highlightErrors();
-  // $('#start-from').on('focusout', validate);
-  // $('#search-for').on('focusout', validate);
 });

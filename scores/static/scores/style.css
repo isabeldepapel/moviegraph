@@ -204,3 +204,20 @@ body.init {
 /* .form-wrapper {
   height: 100vh;
 } */
+
+/***** REEL *****/
+.loader {
+  position: relative;
+  top: 4rem;
+  /* width: 7rem; */
+  height: 15rem;
+  /* z-index: 10; */
+  background: url('./images/reel.png') 50% 50% no-repeat;
+  background-size: contain;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
