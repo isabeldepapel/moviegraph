@@ -29,7 +29,7 @@ form {
 }
 
 form button#search-graph {
-  border: #EB5E28 1.25px solid;
+  border: 1.25px #EB5E28 solid;
   border-radius: 5px;
   color: #EB5E28;
   background-color: transparent;
@@ -160,4 +160,44 @@ p.error {
 
 input.error {
   border-color: red;
+}
+
+/**** HOME PAGE ****/
+div.home {
+  background: linear-gradient(
+       rgba(0, 0, 0, 0.4),
+       rgba(0, 0, 0, 0.4)
+     ), url('./images/hackers.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+form.home button#search-graph {
+  /* border: #EB5E28 1.25px solid; */
+  border: 1.5px solid white;
+  border-radius: 5px;
+  /* color: #EB5E28; */
+  color: white;
+  background-color: transparent;
+  font-size: 1.4rem;
+  font-weight: bold;
+  height: 3.8rem;
+}
+
+form.home button#search-graph:hover, form.home button#search-graph:focus {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.init #search-graph-form input {
+  /* border-radius: 2px; */
+  height: 3.8rem;
+  font-size: 1.25rem;
+  /* margin-bottom: 0; */
+}
+
+.form-wrapper {
+  height: 100vh;
 }

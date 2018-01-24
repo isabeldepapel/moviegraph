@@ -131,24 +131,6 @@ const checkName = function checkName(event) {
   });
 };
 
-const validate = function validate(event) {
-  const name = $(event.currentTarget).val();
-  console.log(event.currentTarget);
-
-  const elem = $(event.currentTarget).attr('id');
-  debugger
-
-  $.get('/validate', { name }, (response) => {
-    console.log(response);
-    actor = response.actor
-    $.get('/search', { elem: actor.name }, (response) => {
-      console.log('success');
-    });
-  }).fail((response) => {
-
-  });
-};
-
 const getActors = function getActors(event) {
   const text = $(event.currentTarget).val();
   // const dataList = $('#actor-list');
@@ -198,6 +180,15 @@ const getActors = function getActors(event) {
 //   $('#search-for').val(searchParam);
 // };
 
+// highlight input box if there's an error
+const highlightErrors = function highlightErrors() {
+  const error = $('.error');
+  console.log(error);
+  if (error && error.text() !== '') {
+    error.next().addClass('error');
+  }
+};
+
 $(document).ready(() => {
   // form.on('click', 'button', checkName);
   $('#search-for').focus();
@@ -209,6 +200,7 @@ $(document).ready(() => {
   $('#search-for').on('input', getActors);
   $('#start-from').on('input', getActors);
 
+  highlightErrors();
   // $('#start-from').on('focusout', validate);
   // $('#search-for').on('focusout', validate);
 });

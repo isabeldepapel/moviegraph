@@ -138,6 +138,10 @@ def get_info(path):
     return path_with_images
 
 
+def home(request):
+    return render(request, 'scores/home.html')
+
+
 def index(request):
     """View function for main/home page."""
     return render(request, 'scores/index.html')
@@ -192,11 +196,12 @@ def search(request):
 
     # save to context for displaying in template
     context = {'search_for': actor1, 'start_from': actor2}
+    context['error'] = {}
 
     # make sure search and start are different
     if actor1.lower() == actor2.lower():
 
-        context['error'] = 'Names need to be different'
+        context['error']['both'] = 'Names need to be different'
         return render(request, 'scores/index.html', context)
 
     # validate inputs

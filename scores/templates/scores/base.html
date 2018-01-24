@@ -10,16 +10,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'scores/style.css' %}" />
   </head>
   <body class="grid-y grid-padding-x">
-    <header class="small-12 cell">
+  <!-- <body class="grid-padding-x align-center init"> -->
+
+    <!-- <header class="small-12 cell" hidden=true>
       <a href="{% url 'scores:index' %}"><h1>Movie + Graph</h1></a>
     </header>
-    <main class="small-12 cell grid-x">
+    <main class="small-12 cell grid-x" hidden=true> -->
 
       {% block content %}
       {% endblock %}
 
-    </main>
-    <footer class="small-12 cell grid-x align-justify align-middle">
+    <!-- </main>
+    <footer class="small-12 cell grid-x align-justify align-middle" hidden=true>
       <section class="imdb-attribution grid-x small-4 cell align-bottom">
         <span class="imdb-attribution">
           <p>Data and links from</p>
@@ -43,13 +45,11 @@
           </a>
         </div>
       </section>
-    </footer>
+    </footer> -->
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
     <script src="{% static 'scores/app.js' %}" type="text/javascript"></script>
 
-    {% block javascript %}
-    {% endblock %}
   </body>
 </html>

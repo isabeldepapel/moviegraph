@@ -3,37 +3,14 @@
 
 {% block content %}
 
-<!-- <section class="error grid-x small-12 cell align-bottom">
-  <span class="small-12 large-5 cell">
-  {% if error.start_fom %}
-    <p class="error start-from">
-      {{ error.start_from }}
-    </p>
-  {% elif error.both %}
-    <p class="error both">
-      {{ error.both }}
-    </p>
-  {% endif %}
-  </span>
-  <span class="small-12 large-5 cell">
-  {% if error.search_for %}
-    <p class="error">
-      {{ error.search_for }}
-    </p>
-  {% endif %}
-  </span>
-</section> -->
+<header class="small-12 cell">
+  <a href="{% url 'scores:home' %}"><h1>Movie + Graph</h1></a>
+</header>
+<main class="small-12 cell grid-x">
 
 <form class="grid-x grid-margin-x small-12 cell align-top" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
 
-
-<!-- {% if error.start_from %}
-  <p class="error start small-12 cell">
-    {{ error.start_from }}
-  </p>
-{% endif %} -->
   <div class="grid-y small-12 large-5 cell">
-
     <input type="search" name="start-from" value="{{ start_from|default:'Kevin Bacon' }}" id="start-from" list="actor-list1" class="small-12 cell" required/>
     <datalist id="actor-list1"></datalist>
     <span class="error small-12 cell">
@@ -49,15 +26,7 @@
     </span>
   </div>
 
-
-    <!-- <label for="search-for" class="small-4 cell">Name</label> -->
-    <!-- {% if error.search_for %}
-      <p class="error end small-12 cell">
-        {{ error.search_for }}
-      </p>
-    {% endif %} -->
   <div class="grid-y small-12 large-5 cell">
-
     <input type="search" name="search-for" id="search-for" list="actor-list2" placeholder="Name" value="{{ search_for }}" class="small-12 cell" required/>
     <datalist id="actor-list2"></datalist>
     <span class="error small-12 cell">
@@ -70,7 +39,6 @@
   </div>
 
   <div class="grid-y small-12 large-2 cell">
-
     <button type="submit" class="button small-12 cell" id="search-graph">Search</button>
   </div>
 
@@ -139,5 +107,32 @@
   </ul>
 {% endif %}
 </section>
+
+</main>
+<footer class="small-12 cell grid-x align-justify align-middle">
+  <section class="imdb-attribution grid-x small-4 cell align-bottom">
+    <span class="imdb-attribution">
+      <p>Data and links from</p>
+    </span>
+      <div class="logo-container grid-x small-2 cell">
+        <a href="http://www.imdb.com/" target="_blank">
+          <img src="{% static 'scores/images/imdb_logo.png' %}" alt="IMDb logo" />
+        </a>
+      </div>
+  </section>
+
+  <small class="small-4 cell">&copy; <a href="https://github.com/IsabelDePapel" target="_blank">Isabel Suchanek, 2018</a></small>
+
+  <section class="tmdb-attribution grid-x small-4 cell align-middle align-right">
+    <span class="tmdb-attribution">
+      <p>Images courtesy of</p>
+    </span>
+    <div class="logo-container grid-x small-2 cell">
+      <a href="https://www.themoviedb.org" target="_blank">
+        <img src="{% static 'scores/images/tmdb_logo.png' %}" alt="TMDb logo" />
+      </a>
+    </div>
+  </section>
+</footer>
 
 {% endblock %}
