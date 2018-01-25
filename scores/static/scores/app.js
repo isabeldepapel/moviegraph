@@ -84,7 +84,7 @@ const searchGraph = function searchGraph(data) {
 
     const noPhotoSrc = 'static/scores/images/profile.jpg';
     const noPhotoAlt = 'no photo available';
-    const noPosterSrc = 'static/scores/images/no_image_avail.png'
+    const noPosterSrc = 'static/scores/images/no_image_avail.png';
     const noPosterAlt = 'no image available';
 
     let imageSrc;
