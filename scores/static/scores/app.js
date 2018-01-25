@@ -82,9 +82,10 @@ const searchGraph = function searchGraph(data) {
     let movieHtml;
     // let endHtml;
 
-    const noPhotoSrc = 'static/scores/images/profile.jpg';
+    const imageDir = 'https://s3-us-west-2.amazonaws.com/moviegraph-static/static/scores/images/';
+    const noPhotoSrc = `${imageDir}profile.jpg`;
     const noPhotoAlt = 'no photo available';
-    const noPosterSrc = 'static/scores/images/no_image_avail.png';
+    const noPosterSrc = `${imageDir}no_image_avail.png`;
     const noPosterAlt = 'no image available';
 
     let imageSrc;
