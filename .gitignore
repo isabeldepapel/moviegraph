@@ -9,7 +9,6 @@ dev.py
 db.sqlite3
 
 # ignore imdb data files (huge)
-test/
 *.csv
 *.tsv
 
