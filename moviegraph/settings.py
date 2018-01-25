@@ -39,7 +39,7 @@ DEBUG = env('DEBUG')
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
-    ALLOWED_HOSTS = ['.elasticbeanstalk.com']
+    ALLOWED_HOSTS = ['.elasticbeanstalk.com', 'movie-graph.com']
 
 
 # Application definition
