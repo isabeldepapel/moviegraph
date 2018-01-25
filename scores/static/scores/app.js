@@ -55,7 +55,7 @@ const init = () => {
   $('footer').show();
 
   // form styling
-  form.removeClass('small-8');
+  form.removeClass('small-10 large-8');
   form.addClass('small-12');
   $('.input-wrapper').addClass('large-5');
   $('.button-wrapper').addClass('large-2');

@@ -18,7 +18,7 @@
     </header>
     <main class="small-12 cell grid-x align-center">
 
-      <form class="grid-x grid-margin-x small-8 cell" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
+      <form class="grid-x grid-margin-x small-10 large-8 cell" action="{% url 'scores:search' %}" method="get" id="search-graph-form">
         <div class="grid-y small-12 cell input-wrapper">
           <input type="search" name="start-from" value="{{ start_from|default:'Kevin Bacon' }}" id="start-from" list="actor-list1" class="small-12 cell" required/>
           <datalist id="actor-list1"></datalist>
