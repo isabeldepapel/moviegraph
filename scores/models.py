@@ -19,11 +19,9 @@ class Title(models.Model):
     id = models.CharField(max_length=9, primary_key=True)
     title_type = models.CharField(max_length=50)
     primary_title = models.TextField(null=True)
-    original_title = models.TextField(null=True)
     is_adult = models.BooleanField()
     start_year = models.IntegerField(null=True)
     end_year = models.IntegerField(null=True)
-    runtime_minutes = models.IntegerField(null=True)
     genres = models.TextField(null=True)
 
     def __str__(self):
@@ -31,8 +29,11 @@ class Title(models.Model):
 
 
 class Name(models.Model):
+    """Define name model."""
+
     id = models.CharField(max_length=9, primary_key=True)
-    primary_name = models.CharField(db_index=True, max_length=200)
+    primary_name = models.CharField(max_length=200)
+    lowercase_name = models.CharField(db_index=True, max_length=200, default='')
     birth_year = models.PositiveSmallIntegerField(null=True)
     death_year = models.PositiveSmallIntegerField(null=True)
     professions = models.TextField(null=True)
