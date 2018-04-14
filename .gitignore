@@ -1,6 +1,9 @@
 .DS_Store
+.vscode
 
 __pycache__
+
+pvenv/
 
 # ignore dev settings with secret key
 dev.py
