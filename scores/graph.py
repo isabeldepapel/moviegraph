@@ -35,7 +35,6 @@ def generate_graph():
     start = time.time()
 
     movies = Title.objects.filter(title_type='movie').values('id')
-    # print(movies)
 
     graph = {}
     # iterate through movies, find actors for each and create nodes
@@ -59,16 +58,9 @@ def generate_graph():
             if len(costars) < 1:
                 continue
 
-            # if actor not in graph:
-            #     graph[actor] = costars
-            # else:
-            #     graph[actor] = graph[actor] | costars
-
-            # if actor not in graph, add actor and its neighbors
-            # with current movie as edge
-
             if actor_id not in graph:
-                graph[actor_id] = {costar: set([movie_id]) for costar in costars}
+                graph[actor_id] = {costar: set([movie_id])
+                                   for costar in costars}
             else:
                 # check if costars are already neighbor nodes before adding
                 for costar in costars:

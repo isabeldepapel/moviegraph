@@ -25,6 +25,7 @@ class Title(models.Model):
     genres = models.TextField(null=True)
 
     def __str__(self):
+        """Return string representation of Title."""
         return self.primary_title + ', ' + str(self.start_year)
 
 
@@ -33,7 +34,11 @@ class Name(models.Model):
 
     id = models.CharField(max_length=9, primary_key=True)
     primary_name = models.CharField(max_length=200)
-    lowercase_name = models.CharField(db_index=True, max_length=200, default='')
+    lowercase_name = models.CharField(
+        db_index=True,
+        max_length=200,
+        default=''
+    )
     birth_year = models.PositiveSmallIntegerField(null=True)
     death_year = models.PositiveSmallIntegerField(null=True)
     professions = models.TextField(null=True)
@@ -41,6 +46,7 @@ class Name(models.Model):
     in_graph = models.BooleanField(default=False)
 
     def __str__(self):
+        """Return string representation of Name."""
         return self.primary_name
 
 
@@ -49,15 +55,13 @@ class Principal(models.Model):
     Join table for Name and Title.
 
     All the principal cast for a given title.
-
-    Also includes field to indicate whether title is one for which
-    the person is known.
     """
 
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     name = models.ForeignKey(Name, on_delete=models.CASCADE)
 
     def __str__(self):
+        """Return string representation of Principal."""
         s = str(self.name) + " in title: " + str(self.title)
 
         return s
@@ -82,11 +86,3 @@ class Graph(models.Model):
         related_name='costar'
     )
     titles = models.TextField()
-
-    def __str__(self):
-        s = str(self.star) + " with " + str(self.costar) + " in: "
-
-        for title in self.titles.split(','):
-            s += str(title)
-
-        return s

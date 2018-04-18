@@ -12,26 +12,30 @@ Information on the available datasets can be found on their [website](http://www
 ## Installation
 1. Clone the repo and `cd` into the root project directory
 
-2. Download the following datasets from IMDb into the data directory (`./scores/data`):
-  - [name.basics.tsv.gz](https://datasets.imdbws.com/name.basics.tsv.gz)
-  - [title.basics.tsv.gz](https://datasets.imdbws.com/title.basics.tsv.gz)
-  - [title.principals.tsv.gz](https://datasets.imdbws.com/title.principals.tsv.gz)
+1. Download the following datasets from IMDb into the data directory (`./scores/data`):
+   - [name.basics.tsv.gz](https://datasets.imdbws.com/name.basics.tsv.gz)
+   - [title.basics.tsv.gz](https://datasets.imdbws.com/title.basics.tsv.gz)
+   - [title.principals.tsv.gz](https://datasets.imdbws.com/title.principals.tsv.gz)
 
-3. Set up and activate a virtual environment. You can set one up with [Python 3](https://docs.python.org/3/library/venv.html): `python3 -m venv /path/to/virtual/env`
+1. Set up and activate a virtual environment. You can set one up with [Python 3](https://docs.python.org/3/library/venv.html): `python3 -m venv /path/to/virtual/env`
 
-4. Install the project dependencies: `pip install -r requirements.txt`
+1. Install the project dependencies: `pip install -r requirements.txt`
 
-5. Create a .env file in the moviegraph subdirectory (not the root project directory) to set up environment variables (`touch ./moviegraph/.env`) and add the following line to the file:
+1. Create a .env file in the moviegraph subdirectory (not the root project directory) to set up environment variables (`touch ./moviegraph/.env`) and add the following line to the file:
 
-  `DEBUG=True`
+   `DEBUG=True`
 
    The `.env` file is read from both `settings.py` (in the same directory) and the scores app. This means when the scores app reads `.env`, it generates a warning that the `.env` file is in a different directory as the file that's reading it; you can ignore this. See [django-dotenv](https://github.com/jpadilla/django-dotenv) docs for more information.
 
-6. Obtain a Django Secret Key using [MiniWebTool](https://www.miniwebtool.com/django-secret-key-generator/) and add it to your .env file:
+1. Obtain a Django Secret Key using [MiniWebTool](https://www.miniwebtool.com/django-secret-key-generator/) and add it to your .env file:
 
    `SECRET_KEY=<secret key goes here>`
 
-7. Create a postgres database for the project ([Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04) has a good walkthrough of the process) and add it to your `.env` file:
+1. Obtain an API key from [TMDb](https://www.themoviedb.org/faq/api) and add it to your .env file:
+
+   `TMDB_API_KEY=<api key goes here>`
+
+1. Create a postgres database for the project ([Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-use-postgresql-with-your-django-application-on-ubuntu-14-04) has a good walkthrough of the process) and add it to your `.env` file:
    - Log into postgres: `psql`
    - Create a database: `CREATE DATABASE <databasename>;`
    - Create a user: `CREATE USER <user> WITH PASSWORD '<password>';`
@@ -44,7 +48,7 @@ Information on the available datasets can be found on their [website](http://www
    - Add the database URL to `.env`:  
     `DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<databasename>`
 
-8. Set up static files to run locally by commenting out the following line in `settings.py`:
+1. Set up static files to run locally by commenting out the following line in `settings.py`:
 
    `STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'`
 
@@ -55,11 +59,27 @@ Information on the available datasets can be found on their [website](http://www
 
    You'll also need to [configure your S3 bucket](https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/) to allow access from the Django app.
 
-9. Run migrations:
+1. Run migrations:
    - `python manage.py makemigrations`
    - `python manage.py migrate`
 
-10. Load IMDb data from tsv files into the database:
+1. Load IMDb data from tsv files into the database:
+   - `python manage.py importdata names`
+   - `python manage.py importdata titles`
+   - `python manage.py importdata principals`
+
+   N.B. Because only partial datasets are available, some of the title ids and name ids in the join table are not found in the Name and Title tables when you try to import principals. If this happens, uncomment out the code in `load_principals()` that will check every entry and print out a set of bad name ids and a set of bad title ids and run the command to load principals (this takes about a day). Once this has completed, replace the existing constants, `BAD_NAMES` and `BAD_TITLES`, in `importdata.py` with the new information, comment out the code again, and then rerun the command.
+
+1. Generate and load graph into the database:
+   - Create a csv file of the graph, `graph.csv`, in the same directory as the tsv files:
+      - `python manage.py importgraph`
+
+   - Load the graph into the database by copying the csv file directly into postgres:
+      - Log into postgres with `psql <databasename>` 
+      - Run the following command:  
+        `COPY scores_graph(id, star_id, costar_id, titles) FROM 'full/path/to/file.csv' WITH DELIMITER E'\t';`
+   - Update the `in_graph` column in the Name table for those actors who are in the graph:
+      - In postgres: `UPDATE scores_name SET in_graph=True WHERE scores_name.id IN (SELECT DISTINCT(star_id) FROM scores_graph);`
 
 ## Issues
 1.  IMDb data only includes principal cast, not full cast, so Bacon scores won't always match (can be higher than) what you find on google or the Oracle of Bacon, etc.
